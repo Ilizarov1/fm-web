@@ -2,44 +2,26 @@
   <el-container>
     <el-aside width="200px">
       <el-menu default-active="2" unique-opened router>
-        <el-submenu index="1">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>导航一</span>
-          </template>
-          <el-menu-item-group>
-            <template slot="title">分组一</template>
-            <el-menu-item index="1-1">选项1</el-menu-item>
-            <el-menu-item index="1-2">选项2</el-menu-item>
-          </el-menu-item-group>
-          <el-menu-item-group title="分组2">
-            <el-menu-item index="1-3">选项3</el-menu-item>
-          </el-menu-item-group>
-          <el-submenu index="1-4">
-            <template slot="title">选项4</template>
-            <el-menu-item index="1-4-1">选项1</el-menu-item>
-          </el-submenu>
-        </el-submenu>
-        <el-menu-item index="2">
-          <i class="el-icon-menu"></i>
-          <span slot="title">导航二</span>
-        </el-menu-item>
-        <el-menu-item index="3" disabled>
-          <i class="el-icon-document"></i>
-          <span slot="title">导航三</span>
-        </el-menu-item>
-        <el-menu-item index="4">
-          <i class="el-icon-setting"></i>
-          <span slot="title">导航四</span>
-        </el-menu-item>
         <el-menu-item index="/login">首页</el-menu-item>
+        <el-menu-item index="/player">球员信息</el-menu-item>
+        <el-menu-item index="/playerList">球员列表</el-menu-item>
+        <el-menu-item index="/employees">教练团队</el-menu-item>
+        <el-menu-item index="/competition">赛程安排</el-menu-item>
+        <el-menu-item index="/training">训练安排</el-menu-item>
+        <el-menu-item index="/scout">球探报告</el-menu-item>
       </el-menu>
     </el-aside>
     <el-container>
       <el-header>
         <div class="header-left">左边</div>
         <div class="header-right">
-          <el-button round type="primary" @click="logout">退出登录</el-button>
+          <el-button
+            round
+            type="primary"
+            @click="logout"
+            style="vertical-align: middle"
+            >退出登录</el-button
+          >
         </div>
       </el-header>
       <el-main>
@@ -74,6 +56,7 @@ export default {
   .menu-card {
     margin-left: 35px;
     margin-right: 35px;
+    background-color: rgb(228, 245, 239);
   }
 }
 .header-left {

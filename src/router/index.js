@@ -2,6 +2,12 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import Main from '../components/Main/index.vue'
+import Player from '../views/Players/Player'
+import PlayerList from '../views/Players/List'
+import Employees from '../views/Employees/index'
+import Competition from '@/views/Schedule/Competition'
+import Training from '@/views/Schedule/Training'
+import Scout from '@/views/Scout/index'
 
 Vue.use(VueRouter)
 
@@ -12,7 +18,15 @@ const routes = [
   },
   {
     path: '/index',
-    component: Main
+    component: Main,
+    children: [
+      { path: '/player', component: Player },
+      { path: '/playerList', component: PlayerList },
+      { path: '/employees', component: Employees },
+      { path: '/competition', component: Competition },
+      { path: '/training', component: Training },
+      { path: '/scout', component: Scout }
+    ]
   },
   {
     path: '/',
@@ -29,13 +43,9 @@ router.beforeEach((to, from, next) => {
   //  to将要访问的路径
   //  from来源路径
   //  next表示放行
-  if (to.path === '/login') {
-    return next()
-  }
-  const tokenStr = window.sessionStorage.getItem('token')
-  if (!tokenStr) {
-    return next('/login')
-  }
+
+  // const tokenStr = window.sessionStorage.getItem('token')
+
   next()
 })
 

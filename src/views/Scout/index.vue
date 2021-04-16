@@ -25,7 +25,8 @@
       <el-col :span="6">
         <div>
           <h5>球探操作</h5>
-          <el-button type="primary">提交球探报告</el-button><br />
+          <el-button type="primary" @click="toRepo">提交球探报告</el-button
+          ><br />
         </div>
       </el-col>
     </el-row>
@@ -70,6 +71,11 @@ export default {
           source: '球探小组'
         }
       ]
+    }
+  },
+  methods: {
+    toRepo() {
+      this.$router.push('/scoutRepo')
     }
   }
 }

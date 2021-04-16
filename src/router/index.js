@@ -8,6 +8,8 @@ import Employees from '../views/Employees/index'
 import Competition from '@/views/Schedule/Competition'
 import Training from '@/views/Schedule/Training'
 import Scout from '@/views/Scout/index'
+import ScoutRepo from '@/views/Scout/Repo'
+import Medi from '@/views/Medi/index'
 
 Vue.use(VueRouter)
 
@@ -25,7 +27,9 @@ const routes = [
       { path: '/employees', component: Employees },
       { path: '/competition', component: Competition },
       { path: '/training', component: Training },
-      { path: '/scout', component: Scout }
+      { path: '/scout', component: Scout },
+      { path: '/scoutRepo', component: ScoutRepo },
+      { path: '/medi', component: Medi }
     ]
   },
   {

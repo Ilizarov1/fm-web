@@ -10,6 +10,7 @@ import Training from '@/views/Schedule/Training'
 import Scout from '@/views/Scout/index'
 import ScoutRepo from '@/views/Scout/Repo'
 import Medi from '@/views/Medi/index'
+import Tactics from '@/views/Tactics/index'
 
 Vue.use(VueRouter)
 
@@ -29,7 +30,8 @@ const routes = [
       { path: '/training', component: Training },
       { path: '/scout', component: Scout },
       { path: '/scoutRepo', component: ScoutRepo },
-      { path: '/medi', component: Medi }
+      { path: '/medi', component: Medi },
+      { path: '/tactics', component: Tactics }
     ]
   },
   {

@@ -10,6 +10,7 @@
         <el-menu-item index="/training">训练安排</el-menu-item>
         <el-menu-item index="/scout">球探报告</el-menu-item>
         <el-menu-item index="/medi">伤情报告</el-menu-item>
+        <el-menu-item index="/tactics">战术</el-menu-item>
       </el-menu>
     </el-aside>
     <el-container>

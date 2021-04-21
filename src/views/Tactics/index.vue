@@ -6,7 +6,7 @@
           <el-card :class="'stage-card stage-1 ' + expandClass.stage1">
             <div v-if="abbrInfo.stage1">
               <div class="abbr-card">
-                <span class="text-top">持球阶段</span>
+                <h4 class="text-top">持球阶段</h4>
                 <p class="text-content">{{ abbr.stage1.fieldWidth }}</p>
                 <p class="text-content">{{ abbr.stage1.pass2Space }}</p>
                 <p
@@ -68,7 +68,7 @@
                       ></div>
                     </div>
                     <div class="field-row">
-                      <div class="field-col" style="background:#F8CF00;"></div>
+                      <div class="field-col" style="background: #f8cf00"></div>
                     </div>
                   </div>
                 </el-row>
@@ -289,7 +289,22 @@
         <el-row>
           <el-card :class="'stage-card stage-2 ' + expandClass.stage2">
             <div v-if="abbrInfo.stage2">
-              <span class="text-top">转换阶段</span>
+              <h4 class="text-top">转换阶段</h4>
+              <p v-if="loseBall.val !== ''" class="text-content">
+                {{ '失去球权时: ' + loseBall.val }}
+              </p>
+              <p v-if="winBall.val !== ''" class="text-content">
+                {{ '赢得球权时: ' + winBall.val }}
+              </p>
+              <p v-if="gkBall.pace.val !== ''" class="text-content">
+                {{ '门将持球时: ' + gkBall.pace.val }}
+              </p>
+              <p v-if="gkBall.target.val !== ''" class="text-content">
+                {{ '门将出球: ' + gkBall.target.val }}
+              </p>
+              <p v-if="gkBall.ways.val !== ''" class="text-content">
+                {{ '门将出球: ' + gkBall.ways.val }}
+              </p>
               <div class="expand-btn" @click="cardExpand('stage2')">更改</div>
             </div>
             <div v-else>
@@ -297,15 +312,35 @@
                 <el-row>
                   <p>失去球权时</p>
                   <el-button-group>
-                    <el-button size="mini">立即反抢</el-button>
-                    <el-button size="mini">重组队形</el-button>
+                    <el-button
+                      size="mini"
+                      :type="loseBall.backType"
+                      @click="loseBallCtrl('backType')"
+                      >立即反抢</el-button
+                    >
+                    <el-button
+                      size="mini"
+                      :type="loseBall.reformType"
+                      @click="loseBallCtrl('reformType')"
+                      >重组队形</el-button
+                    >
                   </el-button-group>
                 </el-row>
                 <el-row>
                   <p>赢得球权时</p>
                   <el-button-group>
-                    <el-button size="mini">立即反击</el-button>
-                    <el-button size="mini">保持队形</el-button>
+                    <el-button
+                      size="mini"
+                      :type="winBall.attStType"
+                      @click="winBallCtrl('attStType')"
+                      >立即反击</el-button
+                    >
+                    <el-button
+                      size="mini"
+                      :type="winBall.keepType"
+                      @click="winBallCtrl('keepType')"
+                      >保持队形</el-button
+                    >
                   </el-button-group>
                 </el-row>
               </el-col>
@@ -313,49 +348,90 @@
                 <el-row>
                   <p>门将控球时</p>
                   <el-button-group>
-                    <el-button size="mini">快速出球</el-button>
-                    <el-button size="mini">降低节奏</el-button>
+                    <el-button
+                      size="mini"
+                      :type="gkBall.pace.fastType"
+                      @click="gkBallCtrl('fastType')"
+                      >快速出球</el-button
+                    >
+                    <el-button
+                      size="mini"
+                      :type="gkBall.pace.slowType"
+                      @click="gkBallCtrl('slowType')"
+                      >降低节奏</el-button
+                    >
                   </el-button-group>
                 </el-row>
                 <el-row>
                   <div class="sm-field">
                     <div class="field-row-2">
-                      <div class="field-col-1">
+                      <div
+                        :class="'field-col-1 ' + gkBall.target.back"
+                        @click="gkBallTargetCtrl('back')"
+                      >
                         <span class="text">发过对方防线</span>
                       </div>
                     </div>
                     <div class="field-row-2 row-height">
-                      <div class="field-col-2 pos-1">
+                      <div
+                        :class="'field-col-2 pos-1 ' + gkBall.target.wings"
+                        @click="gkBallTargetCtrl('wings')"
+                      >
                         <span class="text">交给两翼</span>
                       </div>
-                      <div class="field-col-3 pos-3">
+                      <div
+                        :class="'field-col-3 pos-3 ' + gkBall.target.attCore"
+                        @click="gkBallTargetCtrl('attCore')"
+                      >
                         <span class="text">给进攻核心</span>
                       </div>
-                      <div class="field-col-3 pos-4">
+                      <div
+                        :class="'field-col-3 pos-4 ' + gkBall.target.orgCore"
+                        @click="gkBallTargetCtrl('orgCore')"
+                      >
                         <span class="text">给组织核心</span>
                       </div>
-                      <div class="field-col-2 pos-2">
+                      <div
+                        :class="'field-col-2 pos-2 ' + gkBall.target.wings"
+                        @click="gkBallTargetCtrl('wings')"
+                      >
                         <span class="text">交给两翼</span>
                       </div>
                     </div>
                     <div class="field-row-2">
-                      <div class="field-col-4">
+                      <div
+                        :class="'field-col-4 ' + gkBall.target.backWings"
+                        @click="gkBallTargetCtrl('backWings')"
+                      >
                         <span class="text">给边后卫</span>
                       </div>
-                      <div class="field-col-4">
+                      <div
+                        :class="'field-col-4 ' + gkBall.target.backCenter"
+                        @click="gkBallTargetCtrl('backCenter')"
+                      >
                         <span class="text">给中后卫</span>
                       </div>
-                      <div class="field-col-4">
+                      <div
+                        :class="'field-col-4 ' + gkBall.target.backWings"
+                        @click="gkBallTargetCtrl('backWings')"
+                      >
                         <span class="text">给边后卫</span>
                       </div>
                     </div>
                   </div>
                 </el-row>
                 <el-row>
-                  <el-select size="mini">
-                    <el-option>1</el-option>
-                    <el-option>1</el-option>
-                    <el-option>1</el-option>
+                  <el-select
+                    size="mini"
+                    v-model="gkBall.ways.val"
+                    placeholder="选择门将出球方式"
+                  >
+                    <el-option
+                      v-for="(item, index) in gkBall.ways.option"
+                      :key="index"
+                      :label="item"
+                      :value="item"
+                    ></el-option>
                   </el-select>
                 </el-row>
               </el-col>
@@ -364,12 +440,78 @@
           </el-card>
         </el-row>
         <el-row>
-          <el-card
-            :class="'stage-card stage-2 ' + expandClass.stage3"
-            @click.native="cardExpand('stage3')"
-          >
+          <el-card :class="'stage-card stage-2 ' + expandClass.stage3">
             <div v-if="abbrInfo.stage3">
-              <span class="text-top">持球阶段</span>
+              <h4 class="text-top">无球阶段</h4>
+              <div class="expand-btn" @click="cardExpand('stage3')">更改</div>
+            </div>
+            <div v-else>
+              <el-col :span="12">
+                <el-row>
+                  <p>盯人</p>
+                  <el-button size="mini" class="singleBtnWidth"
+                    >贴身盯防</el-button
+                  >
+                </el-row>
+                <el-row>
+                  <p>抢断</p>
+                  <el-button-group>
+                    <el-button size="mini" class="doubleBtnWidth"
+                      >注意动作</el-button
+                    >
+                    <el-button size="mini" class="doubleBtnWidth"
+                      >凶狠拼抢</el-button
+                    >
+                  </el-button-group>
+                </el-row>
+                <el-row>
+                  <p>压迫</p>
+                  <span style="font-size: 10px">疯狂压迫</span><br />
+                  <el-slider style="width: 160px; margin: auto"></el-slider>
+                  <el-button size="mini" class="singleBtnWidth"
+                    >逼抢门将</el-button
+                  >
+                </el-row>
+              </el-col>
+              <el-col :span="12">
+                <p>防守队形</p>
+                <el-row
+                  ><el-button size="mini" class="singleBtnWidth"
+                    >使用越位陷阱</el-button
+                  ></el-row
+                >
+                <el-row>
+                  <div class="sm-field">
+                    <div
+                      v-for="(row, i) in defField.posCtrl"
+                      :key="i"
+                      class="def-row"
+                    >
+                      <div
+                        v-for="(col, j) in row"
+                        :key="j"
+                        :class="
+                          j === 'ctrl' ? 'def-col-ctrl ' : 'def-col-1 ' + col
+                        "
+                      >
+                        <div v-if="i === '0' && j === 'ctrl'" class="ctrl-text">
+                          更高<br />
+                          遭遇线
+                        </div>
+                        <div v-if="i === '4' && j === 'ctrl'" class="ctrl-text">
+                          更高<br />
+                          后防线
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </el-row>
+                <el-row>
+                  <span>防守宽度</span><br />
+                  <el-slider style="width: 160px; margin: auto"></el-slider>
+                </el-row>
+              </el-col>
+              <div class="expand-btn" @click="cardExpand('stage3')">完成</div>
             </div>
           </el-card>
         </el-row>
@@ -519,16 +661,19 @@ export default {
       },
       // 赢得球权-stage2
       winBall: {
-        type: '',
+        attStType: '',
+        keepType: '',
         val: ''
       },
       loseBall: {
-        type: '',
+        backType: '',
+        reformType: '',
         val: ''
       },
       gkBall: {
         pace: {
-          type: '',
+          fastType: '',
+          slowType: '',
           val: ''
         },
         target: {
@@ -537,12 +682,61 @@ export default {
           attCore: '',
           orgCore: '',
           backWings: '',
-          backCenter: ''
+          backCenter: '',
+          val: ''
+        },
+        ways: {
+          val: '',
+          option: [],
+          lst: ['地滚球出球', '长距离手抛球', '尽量短传', '大脚开球']
+        }
+      },
+      defField: {
+        posCtrl: {
+          0: {
+            0: '',
+            1: '',
+            2: '',
+            ctrl: ''
+          },
+          1: {
+            0: '',
+            1: '',
+            2: '',
+            3: '',
+            4: ''
+          },
+          2: {
+            0: '',
+            1: '',
+            2: '',
+            3: '',
+            4: ''
+          },
+          3: {
+            0: '',
+            1: '',
+            2: '',
+            3: '',
+            4: ''
+          },
+          4: {
+            0: '',
+            1: '',
+            2: '',
+            3: '',
+            4: '',
+            ctrl: ''
+          },
+          5: {
+            0: ''
+          }
         }
       }
     }
   },
   methods: {
+    // 控制展开
     cardExpand(index) {
       // console.log(
       //   '触发了',
@@ -846,6 +1040,113 @@ export default {
           this.area.creative[key] = ''
         }
       }
+    },
+    // 失去球权控制
+    loseBallCtrl(choice) {
+      if (this.loseBall[choice] === '' || this.loseBall[choice] === 'danger') {
+        this.loseBall[choice] = 'primary'
+        for (const key in this.loseBall) {
+          if (key !== choice) this.loseBall[key] = 'danger'
+        }
+        switch (choice) {
+          case 'backType':
+            this.loseBall.val = '立即反抢'
+            break
+          case 'reformType':
+            this.loseBall.val = '重组队形'
+            break
+        }
+      } else {
+        for (const key in this.loseBall) {
+          this.loseBall[key] = ''
+        }
+        this.loseBall.val = ''
+      }
+    },
+    // 赢得球权控制
+    winBallCtrl(choice) {
+      if (this.winBall[choice] === '' || this.winBall[choice] === 'danger') {
+        this.winBall[choice] = 'primary'
+        for (const key in this.winBall) {
+          if (key !== choice) this.winBall[key] = 'danger'
+        }
+        switch (choice) {
+          case 'attStType':
+            this.winBall.val = '立即反击'
+            break
+          case 'keepType':
+            this.winBall.val = '保持队型'
+            break
+        }
+      } else {
+        for (const key in this.winBall) {
+          this.winBall[key] = ''
+        }
+        this.winBall.val = ''
+      }
+    },
+    // 门将持球控制
+    gkBallCtrl(choice) {
+      if (
+        this.gkBall.pace[choice] === '' ||
+        this.gkBall.pace[choice] === 'danger'
+      ) {
+        this.gkBall.pace[choice] = 'primary'
+        for (const key in this.gkBall.pace) {
+          if (key !== choice) this.gkBall.pace[key] = 'danger'
+        }
+        switch (choice) {
+          case 'fastType':
+            this.gkBall.pace.val = '快速出球'
+            break
+          case 'slowType':
+            this.gkBall.pace.val = '降低节奏'
+            break
+        }
+      } else {
+        for (const key in this.gkBall.pace) {
+          this.gkBall.pace[key] = ''
+        }
+        this.gkBall.pace.val = ''
+      }
+    },
+    // 门将出球目标
+    gkBallTargetCtrl(choice) {
+      if (
+        this.gkBall.target[choice] === '' ||
+        this.gkBall.target[choice] === 'area-unselect'
+      ) {
+        this.gkBall.target[choice] = 'area-select'
+        for (const key in this.gkBall.target) {
+          if (key !== choice && key !== 'val') {
+            this.gkBall.target[key] = 'area-unselect'
+          }
+        }
+        switch (choice) {
+          case 'back':
+            this.gkBall.target.val = '发过对方防线'
+            break
+          case 'wings':
+            this.gkBall.target.val = '交给两翼'
+            break
+          case 'attCore':
+            this.gkBall.target.val = '给进攻核心'
+            break
+          case 'orgCore':
+            this.gkBall.target.val = '给组织核心'
+            break
+          case 'backWings':
+            this.gkBall.target.val = '给边后卫'
+            break
+          case 'backCenter':
+            this.gkBall.target.val = '给中后卫'
+            break
+        }
+      } else {
+        for (const key in this.gkBall.target) {
+          this.gkBall.target[key] = ''
+        }
+      }
     }
   },
   watch: {
@@ -943,12 +1244,45 @@ export default {
         }
       },
       immediate: true
+    },
+    'gkBall.target.val': {
+      handler: function(val) {
+        this.gkBall.ways.val = ''
+        switch (val) {
+          case '发过对方防线':
+            this.gkBall.ways.option = this.gkBall.ways.lst.slice(-1)
+            break
+          case '交给两翼':
+            this.gkBall.ways.option = this.gkBall.ways.lst.slice(0, 3)
+            break
+          case '给进攻核心':
+            this.gkBall.ways.option = this.gkBall.ways.lst.slice(-1)
+            break
+          case '给组织核心':
+            this.gkBall.ways.option = this.gkBall.ways.lst
+            break
+          case '给中后卫':
+            this.gkBall.ways.option = this.gkBall.ways.lst.slice(0, 3)
+            break
+          case '给边后卫':
+            this.gkBall.ways.option = this.gkBall.ways.lst.slice(0, 3)
+            break
+        }
+      },
+      deep: true,
+      immediate: true
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.singleBtnWidth {
+  width: 160px;
+}
+.doubleBtnWidth {
+  width: 80px;
+}
 .area-select {
   background-color: rgba(22, 210, 89, 0.8) !important;
 }
@@ -1007,6 +1341,12 @@ export default {
   z-index: 999;
 }
 .stage-expand-2 {
+  width: 600px;
+  height: 500px;
+  position: relative;
+  z-index: 999;
+}
+.stage-expand-3 {
   width: 600px;
   height: 500px;
   position: relative;
@@ -1240,5 +1580,34 @@ export default {
 .field-slider {
   margin: 0 64px;
   width: 192px;
+}
+.def-row {
+  position: relative;
+  width: 192px;
+  top: 60px;
+  left: 44px;
+  margin: 5px 0;
+  .def-col-1 {
+    height: 20px;
+    width: 20px;
+    border-radius: 20px;
+    display: inline-block;
+    background-color: #f2f6fc;
+  }
+  .def-col-ctrl {
+    position: absolute;
+    top: 7px;
+    left: 0;
+    height: 5px;
+    width: 250px;
+    margin: 0 auto;
+    background-color: #4caf50;
+    cursor: pointer;
+  }
+  .ctrl-text {
+    position: absolute;
+    top: 5px;
+    right: 0;
+  }
 }
 </style>

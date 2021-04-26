@@ -443,40 +443,108 @@
           <el-card :class="'stage-card stage-2 ' + expandClass.stage3">
             <div v-if="abbrInfo.stage3">
               <h4 class="text-top">无球阶段</h4>
+              <p class="text-content">{{ defField.encounterLine.title }}</p>
+              <p class="text-content">{{ defField.defLine.title }}</p>
+              <p class="text-content">{{ defField.defWidth.title }}</p>
+              <p class="text-content">{{ defField.pushSlider.title }}</p>
+              <p class="text-content">{{ defField.pushGk.title }}</p>
+              <p class="text-content">{{ defField.stealBall.title }}</p>
+              <p class="text-content">{{ defField.closeDef.title }}</p>
               <div class="expand-btn" @click="cardExpand('stage3')">更改</div>
             </div>
             <div v-else>
-              <el-col :span="12">
+              <el-col :span="8">
                 <el-row>
                   <p>盯人</p>
-                  <el-button size="mini" class="singleBtnWidth"
+                  <el-button
+                    size="mini"
+                    class="singleBtnWidth"
+                    :type="defField.closeDef.val"
+                    @click="closeDefCtrl"
                     >贴身盯防</el-button
                   >
                 </el-row>
                 <el-row>
                   <p>抢断</p>
                   <el-button-group>
-                    <el-button size="mini" class="doubleBtnWidth"
+                    <el-button
+                      size="mini"
+                      class="doubleBtnWidth"
+                      :type="defField.stealBall.watchout"
+                      @click="stealBallCtrl('watchout')"
                       >注意动作</el-button
                     >
-                    <el-button size="mini" class="doubleBtnWidth"
+                    <el-button
+                      size="mini"
+                      class="doubleBtnWidth"
+                      :type="defField.stealBall.fierce"
+                      @click="stealBallCtrl('fierce')"
                       >凶狠拼抢</el-button
                     >
                   </el-button-group>
                 </el-row>
                 <el-row>
                   <p>压迫</p>
-                  <span style="font-size: 10px">疯狂压迫</span><br />
-                  <el-slider style="width: 160px; margin: auto"></el-slider>
-                  <el-button size="mini" class="singleBtnWidth"
+                  <span style="font-size: 10px">{{
+                    defField.pushSlider.title
+                  }}</span
+                  ><br />
+                  <el-slider
+                    style="width: 160px; margin: auto"
+                    v-model="defField.pushSlider.val"
+                    show-stops
+                    :step="25"
+                    :show-tooltip="false"
+                    @input="pushSliderCtrl"
+                  ></el-slider>
+                  <el-button
+                    size="mini"
+                    class="singleBtnWidth"
+                    :type="defField.pushGk.val"
+                    @click="pushGkCtrl"
                     >逼抢门将</el-button
                   >
                 </el-row>
               </el-col>
-              <el-col :span="12">
-                <p>防守队形</p>
+              <el-col :span="8">
+                <el-row>
+                  <p>防守队形</p>
+                  <span style="font-size: 10px">遭遇线</span><br />
+                  <el-slider
+                    style="width: 160px; margin: auto"
+                    v-model="defField.encounterLine.val"
+                    @input="encounterLine"
+                    show-stops
+                    :show-tooltip="false"
+                    :step="50"
+                  ></el-slider>
+                  <span style="font-size: 10px">后防线</span><br />
+                  <el-slider
+                    style="width: 160px; margin: auto"
+                    v-model="defField.defLine.val"
+                    @input="defLine"
+                    show-stops
+                    :show-tooltip="false"
+                    :step="50"
+                  ></el-slider>
+                  <span style="font-size: 10px">防守宽度</span><br />
+                  <el-slider
+                    style="width: 160px; margin: auto"
+                    v-model="defField.defWidth.val"
+                    @input="defWidthCtrl"
+                    show-stops
+                    :show-tooltip="false"
+                    :step="50"
+                  ></el-slider>
+                </el-row>
+              </el-col>
+              <el-col :span="8">
                 <el-row
-                  ><el-button size="mini" class="singleBtnWidth"
+                  ><el-button
+                    size="mini"
+                    class="singleBtnWidth"
+                    :type="defField.offside.val"
+                    @click="offsideCtrl"
                     >使用越位陷阱</el-button
                   ></el-row
                 >
@@ -485,7 +553,7 @@
                     <div
                       v-for="(row, i) in defField.posCtrl"
                       :key="i"
-                      class="def-row"
+                      :class="'def-row ' + defField.rowClass[i]"
                     >
                       <div
                         v-for="(col, j) in row"
@@ -493,22 +561,19 @@
                         :class="
                           j === 'ctrl' ? 'def-col-ctrl ' : 'def-col-1 ' + col
                         "
+                        :id="j === 'ctrl' ? 'line' + i : ''"
                       >
                         <div v-if="i === '0' && j === 'ctrl'" class="ctrl-text">
-                          更高<br />
+                          {{ defField.encounterLine.title }}<br />
                           遭遇线
                         </div>
                         <div v-if="i === '4' && j === 'ctrl'" class="ctrl-text">
-                          更高<br />
+                          {{ defField.defLine.title }}<br />
                           后防线
                         </div>
                       </div>
                     </div>
                   </div>
-                </el-row>
-                <el-row>
-                  <span>防守宽度</span><br />
-                  <el-slider style="width: 160px; margin: auto"></el-slider>
                 </el-row>
               </el-col>
               <div class="expand-btn" @click="cardExpand('stage3')">完成</div>
@@ -516,17 +581,18 @@
           </el-card>
         </el-row>
       </el-col>
-      <el-col :span="11">
-        <div class="field-1"></div>
+      <el-col :span="20">
+        <choose-line-up></choose-line-up>
       </el-col>
-      <el-col :span="9">这里是球员</el-col>
     </el-row>
   </div>
 </template>
 
 <script>
+import ChooseLineUp from 'components/Tactics/ChooseLineUp'
 export default {
   name: 'index',
+  components: { ChooseLineUp },
   data() {
     return {
       // 缩略信息
@@ -731,6 +797,47 @@ export default {
           5: {
             0: ''
           }
+        },
+        defLine: {
+          val: 50,
+          title: '标准后防线'
+        },
+        encounterLine: {
+          val: 0,
+          title: '遭遇线后撤'
+        },
+        defWidth: {
+          val: 0,
+          title: '收缩'
+        },
+        rowClass: {
+          0: '',
+          1: '',
+          2: '',
+          3: '',
+          4: '',
+          5: ''
+        },
+        closeDef: {
+          val: '',
+          title: ''
+        },
+        stealBall: {
+          watchout: '',
+          fierce: '',
+          title: ''
+        },
+        pushSlider: {
+          val: 0,
+          title: '减少紧逼'
+        },
+        pushGk: {
+          val: '',
+          title: ''
+        },
+        offside: {
+          val: '',
+          title: ''
         }
       }
     }
@@ -1147,6 +1254,139 @@ export default {
           this.gkBall.target[key] = ''
         }
       }
+    },
+    // 遭遇线控制
+    encounterLine(val) {
+      if (val === 0) {
+        for (const key in this.defField.rowClass) {
+          if (key !== '5' && key !== '4') {
+            this.defField.rowClass[key] = 'def-row-1 '
+          }
+        }
+        this.defField.encounterLine.title = '遭遇线后撤'
+      } else if (val === 50) {
+        for (const key in this.defField.rowClass) {
+          if (key !== '5' && key !== '4') {
+            this.defField.rowClass[key] = 'def-row-2 '
+          }
+        }
+        this.defField.encounterLine.title = '标准遭遇线'
+      } else if (val === 100) {
+        for (const key in this.defField.rowClass) {
+          if (key !== '5' && key !== '4') {
+            this.defField.rowClass[key] = 'def-row-3 '
+          }
+        }
+        this.defField.encounterLine.title = '遭遇线前压'
+      }
+    },
+    // 后防线控制
+    defLine(val) {
+      if (val === 0) {
+        this.defField.rowClass['4'] = 'def-row-1 '
+        this.defField.defLine.title = '后防线后撤'
+      } else if (val === 50) {
+        this.defField.rowClass['4'] = 'def-row-2 '
+        this.defField.defLine.title = '标准后防线'
+      } else if (val === 100) {
+        this.defField.rowClass['4'] = 'def-row-3 '
+        this.defField.defLine.title = '后防线前压'
+      }
+    },
+    // 防守宽度控制
+    defWidthCtrl(val) {
+      const changeWidth = className => {
+        for (const row in this.defField.posCtrl) {
+          if (row === '4') {
+            for (const col in this.defField.posCtrl[row]) {
+              this.defField.posCtrl[row][col] = className + ' '
+            }
+          }
+        }
+      }
+      if (val === 0) {
+        changeWidth('def-width-1')
+      } else if (val === 50) {
+        changeWidth('def-width-2')
+      } else if (val === 100) {
+        changeWidth('def-width-3')
+      }
+    },
+    // 贴身盯防控制
+    closeDefCtrl() {
+      if (this.defField.closeDef.val === '') {
+        this.defField.closeDef.val = 'primary'
+        this.defField.closeDef.title = '贴身盯防'
+      } else {
+        this.defField.closeDef.val = ''
+        this.defField.closeDef.title = ''
+      }
+    },
+    // 抢断控制
+    stealBallCtrl(type) {
+      if (
+        this.defField.stealBall[type] === '' ||
+        this.defField.stealBall[type] === 'danger'
+      ) {
+        for (const key in this.defField.stealBall) {
+          if (key === type) this.defField.stealBall[type] = 'primary'
+          else if (key !== type && key !== 'val') {
+            this.defField.stealBall[key] = 'danger'
+          }
+        }
+        if (type === 'watchout') {
+          this.defField.stealBall.title = '注意动作'
+        } else {
+          this.defField.stealBall.title = '凶狠拼抢'
+        }
+      } else {
+        for (const key in this.defField.stealBall) {
+          if (key !== 'val') {
+            this.defField.stealBall[key] = ''
+          }
+        }
+        this.defField.stealBall.title = ''
+      }
+    },
+    // 逼抢门将控制
+    pushGkCtrl() {
+      if (this.defField.pushGk.val === '') {
+        this.defField.pushGk.val = 'primary'
+        this.defField.pushGk.title = '逼抢门将'
+      } else {
+        this.defField.pushGk.val = ''
+        this.defField.pushGk.title = ''
+      }
+    },
+    // 压迫强度控制
+    pushSliderCtrl(val) {
+      switch (val) {
+        case 0:
+          this.defField.pushSlider.title = '减少紧逼'
+          break
+        case 25:
+          this.defField.pushSlider.title = '略微减少紧逼'
+          break
+        case 50:
+          this.defField.pushSlider.title = '紧逼'
+          break
+        case 75:
+          this.defField.pushSlider.title = '加强紧逼'
+          break
+        case 100:
+          this.defField.pushSlider.title = '疯狂压迫'
+          break
+      }
+    },
+    // 越位陷阱控制
+    offsideCtrl() {
+      if (this.defField.offside.val === '') {
+        this.defField.offside.val = 'primary'
+        this.defField.offside.title = '使用越位陷阱'
+      } else {
+        this.defField.offside.val = ''
+        this.defField.offside.title = ''
+      }
     }
   },
   watch: {
@@ -1347,25 +1587,12 @@ export default {
   z-index: 999;
 }
 .stage-expand-3 {
-  width: 600px;
-  height: 500px;
+  width: 900px;
+  height: 400px;
   position: relative;
   z-index: 999;
 }
-.field-1 {
-  height: 642px;
-  position: relative;
-  &:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('../../assets/images/fields/球场竖向.png') no-repeat center
-      center;
-  }
-}
+
 .sm-field {
   height: 250px;
   position: relative;
@@ -1584,12 +1811,13 @@ export default {
 .def-row {
   position: relative;
   width: 192px;
-  top: 60px;
+  top: 30px;
   left: 44px;
-  margin: 5px 0;
+  margin: 0 0 15px 0;
   .def-col-1 {
     height: 20px;
     width: 20px;
+    margin: 0 3px;
     border-radius: 20px;
     display: inline-block;
     background-color: #f2f6fc;
@@ -1609,5 +1837,23 @@ export default {
     top: 5px;
     right: 0;
   }
+}
+.def-row-1 {
+  top: 30px !important;
+}
+.def-row-2 {
+  top: 25px !important;
+}
+.def-row-3 {
+  top: 20px !important;
+}
+.def-width-1 {
+  margin: 0 3px !important;
+}
+.def-width-2 {
+  margin: 0 5px !important;
+}
+.def-width-3 {
+  margin: 0 7px !important;
 }
 </style>

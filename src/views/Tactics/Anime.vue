@@ -50,21 +50,19 @@
       </el-row>
     </el-col>
     <el-col :span="8">
-      <el-col :span="12">
-        <p>关键帧</p>
-        <el-steps direction="vertical" :active="1">
-          <el-step title="0" description="test"></el-step>
-          <el-step
-            v-for="(frame, index) in steps.frames"
-            :title="index"
-            :key="index"
-            :description="frame.descrption"
-          ></el-step>
-        </el-steps>
-      </el-col>
-      <el-col :span="12">
-        <el-button @click="pushFrame">添加关键帧</el-button>
-      </el-col>
+      <el-row>
+        <span style="margin-right: 5px">关键帧</span>
+        <el-button @click="pushFrame" size="mini">添加关键帧</el-button>
+      </el-row>
+
+      <el-steps direction="vertical" :active="steps.active">
+        <el-step
+          v-for="(frame, index) in steps.frames"
+          :title="index.toString()"
+          :key="index"
+          :description="frame.description"
+        ></el-step>
+      </el-steps>
     </el-col>
   </div>
 </template>
@@ -471,19 +469,7 @@ export default {
     // 初始化画布
     initCanvas() {
       this.ctx = document.getElementById('canvas').getContext('2d')
-      this.bg.src = require('@/assets/images/fields/球场竖向.png')
       window.requestAnimationFrame(this.drawAnime)
-      // this.drawBG()
-      // this.drawCircleMove()
-    },
-    // 画背景
-    drawBG() {
-      const ctx = document.getElementById('canvas').getContext('2d')
-      const img = new Image()
-      img.onload = function() {
-        ctx.drawImage(img, 0, 0)
-      }
-      img.src = require('@/assets/images/fields/球场竖向.png')
     },
     // 初始化坐标
     initXandY() {
@@ -499,16 +485,15 @@ export default {
         currentX = 20
       }
     },
-    // 展示坐标
-    showXY(col) {
-      console.log(col.x, col.y)
-    },
     // 处理拖动
     handlerDrag(event) {
+      console.log('触发前容器', this.dragged.elem)
       this.dragged.elem = event.target
+      console.log('触发drag')
       if (this.dragged.elem.getAttribute('data-type') === 'player') {
         const dataIsCopy = this.dragged.elem.getAttribute('data-is-copy')
         const elemIndex = this.dragged.elem.getAttribute('data-index')
+        console.log('index', elemIndex, 'is-copy', dataIsCopy)
         if (dataIsCopy === null) {
           this.dragged.elem.setAttribute('data-is-copy', '0')
         }
@@ -533,6 +518,7 @@ export default {
         pNode.removeChild(this.dragged.elem)
         const dupNode = this.dragged.elem.cloneNode(true)
         dupNode.addEventListener('dragstart', this.handlerDrag)
+        dupNode.setAttribute('data-index', this.index++)
         pNode.appendChild(dupNode)
         this.dragged.elem.setAttribute('data-is-copy', '1')
         event.target.appendChild(this.dragged.elem)
@@ -569,17 +555,40 @@ export default {
             }
           }
         } else if (elemType === 'ball') {
-          //球的话
+          // 球的话
+          const ballframe = {
+            x: col.x,
+            y: col.y
+          }
+          this.keyframes.set('ball', ballframe)
         }
       }
     },
     // 添加关键帧
-    pushFrame() {},
-    // 画一个圆并且移动
-    drawCircleMove() {
-      this.ctx.beginPath()
-      this.ctx.arc(20, 20, 20, 0, 2 * Math.PI)
-      this.ctx.fill()
+    pushFrame() {
+      const playerframes = this.keyframes.get('player')
+      const ballframe = this.keyframes.get('ball')
+      console.log(playerframes, ballframe)
+      if (playerframes == null) {
+        return this.$message.error('场上没有球员')
+      }
+      if (ballframe == null) {
+        return this.$message.error('场上没有球')
+      }
+      const balldes = `球在(${ballframe.x},${ballframe.y})处`
+      let playerdes = ''
+      for (const frame of playerframes) {
+        const template = `;球员${frame.index}号在(${frame.x},${frame.y})处`
+        console.log('球员模版', template)
+        playerdes += template
+      }
+      this.steps.frames.push({
+        ball: ballframe,
+        players: playerframes,
+        description: balldes + playerdes
+      })
+      console.log('球员', playerframes)
+      this.steps.active++
     },
     drawAnime() {
       // 画在画布上面
@@ -587,6 +596,9 @@ export default {
       ctx.globalCompositeOperation = 'destination-over'
       ctx.clearRect(0, 0, 440, 320)
       const curTime = new Date().getTime()
+      ctx.fillStyle = '#000000'
+      ctx.strokeStyle = 'dodgerblue'
+      ctx.save()
       ctx.beginPath()
       // 20->100
       this.frame.x = this.frame.x + (curTime - this.time) / 10
@@ -595,7 +607,9 @@ export default {
       this.time = curTime
       ctx.fill()
       window.requestAnimationFrame(this.drawAnime)
-    }
+    },
+    // 根据关键帧计算每一帧坐标递增
+    caldxdy(type, index) {}
   },
   mounted() {
     this.initCanvas()

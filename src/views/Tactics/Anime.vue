@@ -1,17 +1,11 @@
 <template>
   <div>
     <el-col :span="4" style="position: relative">
-      <el-row>
-        <el-button v-if="paintVis" @click="paintVis = false"
-          >切换到canvas</el-button
-        >
-        <el-button v-else @click="paintVis = true">切换到画图</el-button>
-      </el-row>
       <div class="tool-bar">
         <div class="tool-box">
           <p>球员</p>
           <div
-            class="circle circle-1"
+            class="circle circle-1 circle-pos"
             draggable="true"
             data-type="player"
             @dragstart="handlerDrag"
@@ -20,11 +14,37 @@
         <div class="tool-box">
           <p>球</p>
           <div
-            class="circle circle-2"
+            class="circle circle-2 circle-pos"
             draggable="true"
             data-type="ball"
             @dragstart="handlerDrag"
           ></div>
+        </div>
+        <div class="tool-box" id="text-box">
+          <p>指示</p>
+          <div
+            v-for="(text, index) in textFrame"
+            :key="index"
+            draggable="true"
+            data-type="text"
+            @dragstart="handlerDrag"
+          >
+            {{ text }}
+          </div>
+          <el-button
+            v-if="addTextCtrl"
+            @click="addText"
+            size="mini"
+            class="add-btn"
+            >添加文字指示</el-button
+          >
+          <el-input v-else size="mini" v-model="textCommand">
+            <el-button
+              slot="append"
+              icon="el-icon-check"
+              @click="submitText"
+            ></el-button>
+          </el-input>
         </div>
       </div>
     </el-col>
@@ -50,15 +70,39 @@
       </el-row>
     </el-col>
     <el-col :span="8">
-      <el-row>
-        <span style="margin-right: 5px">关键帧</span>
-        <el-button @click="pushFrame" size="mini">添加关键帧</el-button>
+      <el-row class="frame-text">
+        <el-button-group>
+          <el-button @click="pushFrame" size="mini" type="primary"
+            >添加关键帧</el-button
+          >
+          <el-button @click="delFrame" size="mini" type="danger"
+            >撤销关键帧</el-button
+          >
+          <el-button
+            v-if="paintVis"
+            @click="playAnime"
+            size="mini"
+            type="success"
+            >播放关键帧</el-button
+          >
+
+          <el-button v-else @click="paintVis = true" size="mini"
+            >设置关键帧</el-button
+          >
+          <el-button
+            v-show="!paintVis"
+            size="mini"
+            type="info"
+            @click="playAnime"
+            >重播</el-button
+          >
+        </el-button-group>
       </el-row>
 
       <el-steps direction="vertical" :active="steps.active">
         <el-step
           v-for="(frame, index) in steps.frames"
-          :title="index.toString()"
+          :title="`关键帧${index}`"
           :key="index"
           :description="frame.description"
         ></el-step>
@@ -68,6 +112,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 export default {
   name: 'Anime',
   data() {
@@ -462,14 +507,26 @@ export default {
         frames: [],
         active: 1
       },
-      keyframes: new Map()
+      keyframes: new Map(),
+      addTextCtrl: true,
+      textCommand: '',
+      textFrame: [],
+      textHeight: ''
     }
   },
   methods: {
+    playAnime() {
+      if (this.steps.frames.length < 2) {
+        return this.$message.error('至少要两个关键帧')
+      }
+      this.paintVis = false
+      const keyframes = _.cloneDeep(this.steps.frames)
+      this.steps.active = 1
+      this.drawAnime(keyframes, 1)
+    },
     // 初始化画布
     initCanvas() {
       this.ctx = document.getElementById('canvas').getContext('2d')
-      window.requestAnimationFrame(this.drawAnime)
     },
     // 初始化坐标
     initXandY() {
@@ -487,13 +544,10 @@ export default {
     },
     // 处理拖动
     handlerDrag(event) {
-      console.log('触发前容器', this.dragged.elem)
       this.dragged.elem = event.target
-      console.log('触发drag')
       if (this.dragged.elem.getAttribute('data-type') === 'player') {
         const dataIsCopy = this.dragged.elem.getAttribute('data-is-copy')
         const elemIndex = this.dragged.elem.getAttribute('data-index')
-        console.log('index', elemIndex, 'is-copy', dataIsCopy)
         if (dataIsCopy === null) {
           this.dragged.elem.setAttribute('data-is-copy', '0')
         }
@@ -568,7 +622,6 @@ export default {
     pushFrame() {
       const playerframes = this.keyframes.get('player')
       const ballframe = this.keyframes.get('ball')
-      console.log(playerframes, ballframe)
       if (playerframes == null) {
         return this.$message.error('场上没有球员')
       }
@@ -578,8 +631,7 @@ export default {
       const balldes = `球在(${ballframe.x},${ballframe.y})处`
       let playerdes = ''
       for (const frame of playerframes) {
-        const template = `;球员${frame.index}号在(${frame.x},${frame.y})处`
-        console.log('球员模版', template)
+        const template = `；球员${frame.index}号在(${frame.x},${frame.y})处`
         playerdes += template
       }
       this.steps.frames.push({
@@ -587,29 +639,122 @@ export default {
         players: playerframes,
         description: balldes + playerdes
       })
-      console.log('球员', playerframes)
-      this.steps.active++
     },
-    drawAnime() {
+    drawAnime(keyframes, time) {
       // 画在画布上面
-      const ctx = this.ctx
-      ctx.globalCompositeOperation = 'destination-over'
+      let currentFrame = keyframes.shift()
+      let nextFrame = keyframes.shift()
+      let delta = this.caldxdy(currentFrame, nextFrame, time)
+      const ctx = document.getElementById('canvas').getContext('2d')
       ctx.clearRect(0, 0, 440, 320)
-      const curTime = new Date().getTime()
-      ctx.fillStyle = '#000000'
-      ctx.strokeStyle = 'dodgerblue'
-      ctx.save()
-      ctx.beginPath()
-      // 20->100
-      this.frame.x = this.frame.x + (curTime - this.time) / 10
-      this.frame.y = this.frame.y + (curTime - this.time) / 10
-      ctx.arc(this.frame.x, this.frame.y, 20, 0, 2 * Math.PI)
-      this.time = curTime
-      ctx.fill()
-      window.requestAnimationFrame(this.drawAnime)
+      const playerimg = new Image()
+      playerimg.src = require('@/assets/images/numbers/跑.png')
+      let flag = nextFrame.ball.x - currentFrame.ball.x
+      const draw = () => {
+        ctx.globalCompositeOperation = 'destination-over'
+        ctx.clearRect(0, 0, 440, 320)
+        ctx.fillStyle = '#000000'
+        ctx.strokeStyle = 'dodgerblue'
+        ctx.save()
+
+        // 画球
+        ctx.fillStyle = '#ffffff'
+        const { dx, dy } = delta.ball
+        ctx.beginPath()
+        ctx.arc(
+          currentFrame.ball.x + dx,
+          currentFrame.ball.y + dy,
+          10,
+          0,
+          2 * Math.PI
+        )
+        ctx.fill()
+        currentFrame.ball.x = currentFrame.ball.x + dx
+        currentFrame.ball.y = currentFrame.ball.y + dy
+        ctx.restore()
+        ctx.save()
+        // 画球员
+        for (const player of currentFrame.players) {
+          const { dx, dy } = delta.players.find(x => x.index === player.index)
+          ctx.drawImage(
+            playerimg,
+            player.x + dx - 15,
+            player.y + dy - 15,
+            30,
+            30
+          )
+          player.x = player.x + dx
+          player.y = player.y + dy
+        }
+
+        // 有没有下一关键帧了
+        if (flag > 0) {
+          if (currentFrame.ball.x >= nextFrame.ball.x) {
+            this.steps.active++
+            currentFrame = nextFrame
+            nextFrame = keyframes.shift()
+            if (nextFrame == null) return this.$message.success('放完了')
+            delta = this.caldxdy(currentFrame, nextFrame, time)
+            flag = nextFrame.ball.x - currentFrame.ball.x
+            setTimeout(draw, 16)
+          } else setTimeout(draw, 16)
+        } else {
+          if (currentFrame.ball.x <= nextFrame.ball.x) {
+            this.steps.active++
+            currentFrame = nextFrame
+            nextFrame = keyframes.shift()
+            if (nextFrame == null) return this.$message.success('放完了')
+            delta = this.caldxdy(currentFrame, nextFrame, time)
+            flag = nextFrame.ball.x - currentFrame.ball.x
+            setTimeout(draw, 16)
+          } else setTimeout(draw, 16)
+        }
+      }
+      setTimeout(draw, 16)
     },
     // 根据关键帧计算每一帧坐标递增
-    caldxdy(type, index) {}
+    caldxdy(from, to, secondes) {
+      if (from == null || to == null) return null
+      const balldx = (to.ball.x - from.ball.x) / (secondes * 60)
+      const balldy = (to.ball.y - from.ball.y) / (secondes * 60)
+      const players = []
+      const fromItor = Object.entries(from.players)
+      const toItor = Object.entries(to.players)
+      while (fromItor.length !== 0 && toItor.length !== 0) {
+        const [cindex, cur] = fromItor.shift()
+        const [nindex, next] = toItor.shift()
+        players.push({
+          dx: (next.x - cur.x) / (secondes * 60),
+          dy: (next.y - cur.y) / (secondes * 60),
+          index: cur.index
+        })
+      }
+      return {
+        ball: {
+          dx: balldx,
+          dy: balldy
+        },
+        players
+      }
+    },
+    // 撤销关键帧
+    delFrame() {
+      this.steps.frames.pop()
+    },
+    // 添加文字指示
+    addText() {
+      this.addTextCtrl = false
+    },
+    // 提交文字并展示
+    submitText() {
+      this.textFrame.push(this.textCommand)
+      this.textCommand = ''
+      const textbox = document.getElementById('text-box')
+      if (textbox.style.height == null) {
+        textbox.style.height = '80px'
+      }
+      this.addTextCtrl = true
+    }
   },
   mounted() {
     this.initCanvas()
@@ -619,6 +764,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
+img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+.frame-text {
+  vertical-align: middle;
+}
 .field-1 {
   height: 320px;
   width: 440px;
@@ -627,6 +781,8 @@ export default {
     width: 100%;
     display: flex;
     .field-col {
+      white-space: nowrap;
+      overflow: visible;
       z-index: 1;
       height: 40px;
       width: 40px;
@@ -653,8 +809,8 @@ export default {
 .circle-1 {
   width: 30px;
   height: 30px;
-  border-radius: 30px;
-  background: #000000;
+  background: url(../../assets/images/numbers/跑.png) no-repeat center center;
+  background-size: 30px;
 }
 .circle-2 {
   width: 20px;
@@ -671,13 +827,24 @@ export default {
   background: url('../../assets/images/fields/球场竖向.png') no-repeat top;
 }
 .tool-bar {
-  display: flex;
-  justify-content: space-around;
   p {
     margin: 5px;
   }
   .tool-box {
+    min-height: 65px;
+    width: 164px;
     margin: 0 5px;
+    position: relative;
+    .circle-pos {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+    }
+    .add-btn {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
   }
 }
 </style>

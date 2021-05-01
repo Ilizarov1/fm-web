@@ -28,6 +28,7 @@
             draggable="true"
             data-type="text"
             @dragstart="handlerDrag"
+            class="command"
           >
             {{ text }}
           </div>
@@ -511,7 +512,8 @@ export default {
       addTextCtrl: true,
       textCommand: '',
       textFrame: [],
-      textHeight: ''
+      textHeight: '',
+      textIndex: 0
     }
   },
   methods: {
@@ -521,6 +523,7 @@ export default {
       }
       this.paintVis = false
       const keyframes = _.cloneDeep(this.steps.frames)
+      keyframes.length = this.steps.frames.length
       this.steps.active = 1
       this.drawAnime(keyframes, 1)
     },
@@ -545,7 +548,8 @@ export default {
     // 处理拖动
     handlerDrag(event) {
       this.dragged.elem = event.target
-      if (this.dragged.elem.getAttribute('data-type') === 'player') {
+      const dataType = this.dragged.elem.getAttribute('data-type')
+      if (dataType === 'player' || dataType === 'text') {
         const dataIsCopy = this.dragged.elem.getAttribute('data-is-copy')
         const elemIndex = this.dragged.elem.getAttribute('data-index')
         if (dataIsCopy === null) {
@@ -553,7 +557,11 @@ export default {
         }
         if (elemIndex === null) {
           // 添加元素索引
-          this.dragged.elem.setAttribute('data-index', this.index++)
+          if (dataType === 'player') {
+            this.dragged.elem.setAttribute('data-index', this.index++)
+          } else {
+            this.dragged.elem.setAttribute('data-index', this.textIndex++)
+          }
         }
         event.dataTransfer.setData('text', null)
       }
@@ -562,9 +570,11 @@ export default {
     handlerDrop(event, col) {
       let copyFlag = ''
       let dataIndex = -1
+      let dataType = ''
       if (this.dragged.elem !== null) {
         copyFlag = this.dragged.elem.getAttribute('data-is-copy')
         dataIndex = this.dragged.elem.getAttribute('data-index')
+        dataType = this.dragged.elem.getAttribute('data-type')
       } else return
       if (copyFlag === '0') {
         // 在工具栏里的
@@ -572,42 +582,63 @@ export default {
         pNode.removeChild(this.dragged.elem)
         const dupNode = this.dragged.elem.cloneNode(true)
         dupNode.addEventListener('dragstart', this.handlerDrag)
-        dupNode.setAttribute('data-index', this.index++)
+        if (dataType === 'player') {
+          dupNode.setAttribute('data-index', this.index++)
+        } else {
+          dupNode.setAttribute('data-index', this.textIndex++)
+        }
+
         pNode.appendChild(dupNode)
         this.dragged.elem.setAttribute('data-is-copy', '1')
         event.target.appendChild(this.dragged.elem)
+        const content = this.dragged.elem.innerText
         this.dragged.elem = null
-        if (!this.keyframes.has('player')) {
-          this.keyframes.set('player', [])
+        if (dataType === 'player') {
+          if (!this.keyframes.has('player')) {
+            this.keyframes.set('player', [])
+          }
+          // 处理从工具栏-球场，球员，帧
+          const frames = this.keyframes.get('player')
+          frames.push({
+            x: col.x,
+            y: col.y,
+            index: dataIndex
+          })
+          this.keyframes.set('player', frames)
+        } else if (dataType === 'text') {
+          if (!this.keyframes.has('text')) {
+            this.keyframes.set('text', [])
+          }
+          const frames = this.keyframes.get('text')
+          frames.push({
+            x: col.x,
+            y: col.y,
+            content,
+            index: dataIndex
+          })
+          this.keyframes.set('text', frames)
         }
-        // 处理从工具栏-球场，球员，帧
-        const frames = this.keyframes.get('player')
-        frames.push({
-          x: col.x,
-          y: col.y,
-          index: dataIndex
-        })
-        this.keyframes.set('player', frames)
       } else {
         // 在画布上的放置
         const pNode = this.dragged.elem.parentNode
         pNode.removeChild(this.dragged.elem)
         event.target.appendChild(this.dragged.elem)
         const elemType = this.dragged.elem.getAttribute('data-type')
-        let playerIdx = -1
+        let idx = -1
         if (elemType !== 'ball') {
-          playerIdx = this.dragged.elem.getAttribute('data-index')
+          idx = this.dragged.elem.getAttribute('data-index')
         }
         this.dragged.elem = null
-        if (elemType === 'player') {
-          // 球员的话，更新坐标
-          const playerframes = this.keyframes.get('player')
-          for (const frame of playerframes) {
-            if (frame.index === playerIdx) {
+        if (elemType === 'player' || elemType === 'text') {
+          // 球员或者文字的话，更新坐标
+          const frames = this.keyframes.get(elemType)
+          for (const frame of frames) {
+            if (frame.index === idx) {
               frame.x = col.x
               frame.y = col.y
             }
           }
+          this.keyframes.set(elemType, frames)
         } else if (elemType === 'ball') {
           // 球的话
           const ballframe = {
@@ -620,8 +651,10 @@ export default {
     },
     // 添加关键帧
     pushFrame() {
-      const playerframes = this.keyframes.get('player')
-      const ballframe = this.keyframes.get('ball')
+      let playerframes = _.cloneDeep(this.keyframes.get('player'))
+      console.log('push的frame', playerframes)
+      let ballframe = this.keyframes.get('ball')
+      let textframes = _.cloneDeep(this.keyframes.get('text'))
       if (playerframes == null) {
         return this.$message.error('场上没有球员')
       }
@@ -634,11 +667,24 @@ export default {
         const template = `；球员${frame.index}号在(${frame.x},${frame.y})处`
         playerdes += template
       }
-      this.steps.frames.push({
+      let textdes = ''
+      if (textframes != null) {
+        for (const frame of textframes) {
+          const template = `；${frame.content}在(${frame.x},${frame.y})处`
+          textdes += template
+        }
+      }
+
+      const item = {
         ball: ballframe,
         players: playerframes,
-        description: balldes + playerdes
-      })
+        text: textframes,
+        description: balldes + playerdes + textdes
+      }
+      this.steps.frames.push(item)
+      playerframes = null
+      ballframe = null
+      textframes = null
     },
     drawAnime(keyframes, time) {
       // 画在画布上面
@@ -686,6 +732,16 @@ export default {
           player.x = player.x + dx
           player.y = player.y + dy
         }
+        ctx.restore()
+        ctx.save()
+        ctx.font = '16px Microsoft YaHei'
+        ctx.textAlign = 'center'
+        ctx.fillStyle = '#ffffff'
+        if (currentFrame.text != null) {
+          for (const command of currentFrame.text) {
+            ctx.fillText(command.content, command.x, command.y)
+          }
+        }
 
         // 有没有下一关键帧了
         if (flag > 0) {
@@ -718,16 +774,20 @@ export default {
       const balldx = (to.ball.x - from.ball.x) / (secondes * 60)
       const balldy = (to.ball.y - from.ball.y) / (secondes * 60)
       const players = []
-      const fromItor = Object.entries(from.players)
-      const toItor = Object.entries(to.players)
-      while (fromItor.length !== 0 && toItor.length !== 0) {
-        const [cindex, cur] = fromItor.shift()
-        const [nindex, next] = toItor.shift()
+      const fromMap = new Map(Object.entries(from.players))
+      const toMap = new Map(Object.entries(to.players))
+      let index = '0'
+      while (fromMap.size !== 0) {
+        const cur = fromMap.get(index)
+        const next = toMap.get(index)
         players.push({
           dx: (next.x - cur.x) / (secondes * 60),
           dy: (next.y - cur.y) / (secondes * 60),
           index: cur.index
         })
+        fromMap.delete(index)
+        toMap.delete(index)
+        index = parseInt(index) + 1 + ''
       }
       return {
         ball: {
@@ -786,6 +846,7 @@ img {
       z-index: 1;
       height: 40px;
       width: 40px;
+      color: #f2f6fc;
     }
   }
   &:before {
@@ -846,5 +907,9 @@ img {
       top: 0;
     }
   }
+}
+.command {
+  text-align: center;
+  margin: 5px 0;
 }
 </style>

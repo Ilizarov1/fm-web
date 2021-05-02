@@ -3,12 +3,23 @@
     <el-col :span="4" style="position: relative">
       <div class="tool-bar">
         <div class="tool-box">
-          <p>球员</p>
+          <p>主队球员</p>
           <div
             class="circle circle-1 circle-pos"
             draggable="true"
             data-type="player"
             @dragstart="handlerDrag"
+            data-color="black"
+          ></div>
+        </div>
+        <div class="tool-box">
+          <p>客队球员</p>
+          <div
+            class="circle circle-3 circle-pos"
+            draggable="true"
+            data-type="player"
+            @dragstart="handlerDrag"
+            data-color="yellow"
           ></div>
         </div>
         <div class="tool-box">
@@ -21,7 +32,7 @@
           ></div>
         </div>
         <div class="tool-box" id="text-box">
-          <p>指示</p>
+          <p style="margin-bottom: 10px">指示</p>
           <div
             v-for="(text, index) in textFrame"
             :key="index"
@@ -90,11 +101,7 @@
           <el-button v-else @click="paintVis = true" size="mini"
             >设置关键帧</el-button
           >
-          <el-button
-            v-show="!paintVis"
-            size="mini"
-            type="info"
-            @click="playAnime"
+          <el-button v-if="!paintVis" size="mini" type="info" @click="playAnime"
             >重播</el-button
           >
         </el-button-group>
@@ -523,7 +530,8 @@ export default {
       }
       this.paintVis = false
       const keyframes = _.cloneDeep(this.steps.frames)
-      keyframes.length = this.steps.frames.length
+      const lastframe = _.cloneDeep(keyframes[keyframes.length - 1])
+      keyframes.push(lastframe)
       this.steps.active = 1
       this.drawAnime(keyframes, 1)
     },
@@ -571,10 +579,12 @@ export default {
       let copyFlag = ''
       let dataIndex = -1
       let dataType = ''
+      let dataColor = ''
       if (this.dragged.elem !== null) {
         copyFlag = this.dragged.elem.getAttribute('data-is-copy')
         dataIndex = this.dragged.elem.getAttribute('data-index')
         dataType = this.dragged.elem.getAttribute('data-type')
+        dataColor = this.dragged.elem.getAttribute('data-color')
       } else return
       if (copyFlag === '0') {
         // 在工具栏里的
@@ -602,7 +612,8 @@ export default {
           frames.push({
             x: col.x,
             y: col.y,
-            index: dataIndex
+            index: dataIndex,
+            color: dataColor
           })
           this.keyframes.set('player', frames)
         } else if (dataType === 'text') {
@@ -652,7 +663,6 @@ export default {
     // 添加关键帧
     pushFrame() {
       let playerframes = _.cloneDeep(this.keyframes.get('player'))
-      console.log('push的frame', playerframes)
       let ballframe = this.keyframes.get('ball')
       let textframes = _.cloneDeep(this.keyframes.get('text'))
       if (playerframes == null) {
@@ -693,8 +703,10 @@ export default {
       let delta = this.caldxdy(currentFrame, nextFrame, time)
       const ctx = document.getElementById('canvas').getContext('2d')
       ctx.clearRect(0, 0, 440, 320)
-      const playerimg = new Image()
-      playerimg.src = require('@/assets/images/numbers/跑.png')
+      const playerimg1 = new Image()
+      playerimg1.src = require('@/assets/images/numbers/跑.png')
+      const playerimg2 = new Image()
+      playerimg2.src = require('@/assets/images/numbers/跑1.png')
       let flag = nextFrame.ball.x - currentFrame.ball.x
       const draw = () => {
         ctx.globalCompositeOperation = 'destination-over'
@@ -722,13 +734,24 @@ export default {
         // 画球员
         for (const player of currentFrame.players) {
           const { dx, dy } = delta.players.find(x => x.index === player.index)
-          ctx.drawImage(
-            playerimg,
-            player.x + dx - 15,
-            player.y + dy - 15,
-            30,
-            30
-          )
+          if (player.color === 'black') {
+            ctx.drawImage(
+              playerimg1,
+              player.x + dx - 15,
+              player.y + dy - 15,
+              30,
+              30
+            )
+          } else {
+            ctx.drawImage(
+              playerimg2,
+              player.x + dx - 15,
+              player.y + dy - 15,
+              30,
+              30
+            )
+          }
+
           player.x = player.x + dx
           player.y = player.y + dy
         }
@@ -873,12 +896,19 @@ img {
   background: url(../../assets/images/numbers/跑.png) no-repeat center center;
   background-size: 30px;
 }
+
 .circle-2 {
   width: 20px;
   height: 20px;
   border-radius: 20px;
   background: #f2f6fc;
   border: 1px solid dodgerblue;
+}
+.circle-3 {
+  width: 30px;
+  height: 30px;
+  background: url(../../assets/images/numbers/跑1.png) no-repeat center center;
+  background-size: 30px;
 }
 .drag-zone {
   height: 100%;
@@ -887,6 +917,7 @@ img {
 #canvas {
   background: url('../../assets/images/fields/球场竖向.png') no-repeat top;
 }
+
 .tool-bar {
   p {
     margin: 5px;

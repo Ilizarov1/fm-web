@@ -12,6 +12,7 @@ import ScoutRepo from '@/views/Scout/Repo'
 import Medi from '@/views/Medi/index'
 import Tactics from '@/views/Tactics/index'
 import Anime from '@/views/Tactics/Anime'
+import FreeKick from '@/views/Tactics/Freekick'
 
 Vue.use(VueRouter)
 
@@ -33,7 +34,8 @@ const routes = [
       { path: '/scoutRepo', component: ScoutRepo },
       { path: '/medi', component: Medi },
       { path: '/tactics', component: Tactics },
-      { path: '/anime', component: Anime }
+      { path: '/anime', component: Anime },
+      { path: '/freekick', component: FreeKick }
     ]
   },
   {

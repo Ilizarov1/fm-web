@@ -3,26 +3,27 @@
     <el-row type="flex" style="margin-bottom: 10px">
       <el-input
         placeholder="请输入内容"
-        v-model="search"
+        v-model="search.content"
         style="width: 350px"
         size="small"
       >
         <el-select
-          v-model="searchType"
+          v-model="search.searchType"
           slot="prepend"
           placeholder="请选择"
           style="width: 90px"
         >
           <el-option label="姓名" value="name"></el-option>
-          <el-option label="所属" value="group"></el-option>
+          <el-option label="所属" value="employGroup"></el-option>
           <el-option label="职位" value="position"></el-option>
         </el-select>
-        <el-button slot="append" icon="el-icon-search"></el-button> </el-input
-    ></el-row>
+        <el-button slot="append" icon="el-icon-search"></el-button>
+      </el-input>
+    </el-row>
     <el-row>
       <el-table width="1060px" :data="employees">
         <el-table-column label="姓名" prop="name"></el-table-column>
-        <el-table-column label="所属" prop="group"></el-table-column>
+        <el-table-column label="所属" prop="employGroup"></el-table-column>
         <el-table-column label="具体职位" prop="position"></el-table-column>
         <el-table-column label="操作">
           <template>
@@ -72,20 +73,21 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 export default {
   name: 'index',
   data() {
     return {
-      employees: [
-        { name: 'jnz', group: '教练组', position: '教练' },
-        { name: 'jnz', group: '教练组', position: '教练' },
-        { name: 'jnz', group: '教练组', position: '教练' },
-        { name: 'jnz', group: '教练组', position: '教练' },
-        { name: 'jnz', group: '教练组', position: '教练' },
-        { name: 'jnz', group: '教练组', position: '教练' },
-        { name: 'jnz', group: '教练组', position: '教练' },
-        { name: 'jnz', group: '教练组', position: '教练' }
-      ],
+      // employees: [
+      //   { name: 'jnz', group: '教练组', position: '教练' },
+      //   { name: 'jnz', group: '教练组', position: '教练' },
+      //   { name: 'jnz', group: '教练组', position: '教练' },
+      //   { name: 'jnz', group: '教练组', position: '教练' },
+      //   { name: 'jnz', group: '教练组', position: '教练' },
+      //   { name: 'jnz', group: '教练组', position: '教练' },
+      //   { name: 'jnz', group: '教练组', position: '教练' },
+      //   { name: 'jnz', group: '教练组', position: '教练' }
+      // ],
       posVisible: false,
       posForm: {
         group: '',
@@ -144,8 +146,15 @@ export default {
           label: '球探',
           value: '球探'
         }
-      ]
+      ],
+      search: {
+        content: '',
+        searchType: ''
+      }
     }
+  },
+  computed: {
+    ...mapState(['employees'])
   },
   methods: {
     changeSelect(e) {

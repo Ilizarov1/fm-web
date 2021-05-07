@@ -25,22 +25,57 @@
 
     <!--    注册窗-->
     <el-dialog title="注册" :visible.sync="signVisible" width="30%">
-      <el-form label-position="left" label-width="80px">
+      <el-form label-position="left" label-width="80px" :model="signForm">
+        <el-tabs v-model="activeName">
+          <el-tab-pane label="球员" name="player"></el-tab-pane>
+          <el-tab-pane label="员工" name="employee"></el-tab-pane>
+        </el-tabs>
         <el-form-item label="用户名">
-          <el-input></el-input>
+          <el-input v-model="signForm.username"></el-input>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input type="password"></el-input>
+          <el-input type="password" v-model="signForm.password"></el-input>
         </el-form-item>
         <el-form-item label="姓名">
-          <el-input></el-input>
+          <el-input
+            v-if="activeName !== 'player'"
+            v-model="signForm.name"
+            auto-complete="off"
+            type="text"
+          ></el-input>
+          <el-select
+            v-else
+            v-model="signForm.name"
+            placeholder="请输入/选择姓名"
+            filterable
+            allow-create
+            style="width: 100%"
+            auto-complete="off"
+            autocomplete="off"
+          >
+            <el-option
+              v-for="(item, index) in this.players"
+              :key="index"
+              :label="item.name"
+              :value="item.name"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="邮箱">
-          <el-input type="email"></el-input>
+          <el-input type="email" v-model="signForm.email"></el-input>
+        </el-form-item>
+        <el-form-item label="角色选择" v-if="activeName !== 'player'">
+          <el-select v-model="signForm.role" style="width: 100%">
+            <el-option label="教练" value="coach"></el-option>
+            <el-option label="队医" value="doctor"></el-option>
+            <el-option label="球探" value="scout"></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div class="login-footer">
-        <el-button type="primary" class="login-button">注册</el-button>
+        <el-button type="primary" class="login-button" @click="submit"
+          >注册</el-button
+        >
         <el-button class="login-button" @click="signVisible = false"
           >取消</el-button
         >
@@ -51,6 +86,7 @@
 
 <script>
 import qs from 'qs'
+import { mapState, mapActions } from 'vuex'
 export default {
   name: 'login',
   data() {
@@ -61,10 +97,22 @@ export default {
         password: '123456'
       },
       // 注册
-      signVisible: false
+      signVisible: false,
+      signForm: {
+        username: '',
+        password: '',
+        name: '',
+        email: '',
+        role: ''
+      },
+      activeName: 'player'
     }
   },
+  computed: {
+    ...mapState(['players'])
+  },
   methods: {
+    ...mapActions(['getPlayers']),
     async login() {
       const { status, data } = await this.$http.post(
         'login/in',
@@ -90,7 +138,25 @@ export default {
             this.$message.error('账号密码错误')
         }
       }
+    },
+    async submit() {
+      if (this.activeName === 'player') {
+        this.signForm.role = 'player'
+      }
+      const { status, data } = await this.$http.post(
+        'login/sign',
+        qs.stringify(this.signForm),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }
+      )
+      console.log(status, data)
     }
+  },
+  mounted() {
+    this.getPlayers()
   }
 }
 </script>

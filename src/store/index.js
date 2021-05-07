@@ -7,6 +7,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     players: [],
+    employees: [],
     status: 200
   },
   mutations: {
@@ -17,6 +18,10 @@ export default new Vuex.Store({
     // 更新status
     updateStatus(state, newStatus) {
       state.status = newStatus
+    },
+    // 更新员工
+    updateEmployees(state, newEmployees) {
+      state.employees = newEmployees
     }
   },
   actions: {
@@ -27,6 +32,15 @@ export default new Vuex.Store({
         commit('updateStatus', status)
       } else {
         commit('updatePlayers', data)
+      }
+    },
+    async getEmployees({ commit }) {
+      commit('updateStatus', 200)
+      const { status, data } = await axios.get('employee/getAll')
+      if (status !== 200) {
+        commit('updateStatus', status)
+      } else {
+        commit('updateEmployees', data)
       }
     }
   },

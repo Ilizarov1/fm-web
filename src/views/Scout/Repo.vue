@@ -640,6 +640,7 @@ export default {
       }
       this.setVantages('advantages', report.advantages)
       this.setVantages('disadvantages', report.disadvantages)
+      this.scoutRepo.suggestion = report.suggestions
     }
   },
   mounted() {

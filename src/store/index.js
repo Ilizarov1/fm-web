@@ -10,6 +10,7 @@ export default new Vuex.Store({
     employees: [],
     coaches: [],
     trainingLst: [],
+    competition: [],
     status: 200
   },
   mutations: {
@@ -42,6 +43,10 @@ export default new Vuex.Store({
         })
       }
       state.trainingLst = newLst
+    },
+    // 更新赛程
+    updateCompetition(state, newCom) {
+      state.competition = newCom
     }
   },
   actions: {
@@ -79,6 +84,15 @@ export default new Vuex.Store({
         commit('updateStatus', status)
       } else {
         commit('updateTrainLst', data)
+      }
+    },
+    async getCompetition({ commit }) {
+      commit('updateStatus', 200)
+      const { status, data } = await axios.get('schedule/getCompetition')
+      if (status !== 200) {
+        commit('updateStatus', status)
+      } else {
+        commit('updateCompetition', data)
       }
     }
   },

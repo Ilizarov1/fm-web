@@ -6,7 +6,7 @@
       >
     </el-row>
     <el-row>
-      <el-calendar>
+      <el-calendar :range="['2021-04-01', '2021-07-01']">
         <template slot="dateCell" slot-scope="{ date, data }">
           <div class="cal-box">
             <p class="date-text">

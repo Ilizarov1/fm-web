@@ -210,10 +210,11 @@ export default {
       this.$forceUpdate()
     }
   },
-  beforeCreate() {},
+  async created() {
+    await this.getTrainLst()
+  },
   mounted() {
     this.getCoaches()
-    this.getTrainLst()
     this.trainingList = this.trainingLst
     this.initTrainItems()
   }

@@ -25,7 +25,7 @@ const routes = [
     path: '/index',
     component: Main,
     children: [
-      { path: '/player', component: Player },
+      { path: '/player/:playerId', component: Player },
       { path: '/playerList', component: PlayerList },
       { path: '/employees', component: Employees },
       { path: '/competition', component: Competition },

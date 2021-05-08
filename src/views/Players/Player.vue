@@ -22,11 +22,11 @@
             <el-card>
               <h5>基本信息</h5>
               <ul style="display: block">
-                <li>姓名 - Lionel Andrés Messi Cuccittini</li>
-                <li>国籍 - 阿根廷</li>
-                <li>年龄 - 33</li>
-                <li>身高 - 5'7"</li>
-                <li>体重 - 159lb</li>
+                <li>姓名 - {{ info.name }}</li>
+                <li>国籍 - {{ info.nation }}</li>
+                <li>年龄 - {{ info.age }}</li>
+                <li>身高 - {{ info.height }} cm</li>
+                <li>体重 - {{ info.weight }} kg</li>
               </ul>
             </el-card>
           </el-col>
@@ -34,11 +34,15 @@
             <el-card>
               <h5>概览</h5>
               <ul style="display: block">
-                <li><el-tag type="primary">93</el-tag> 综合能力</li>
-                <li><el-tag type="primary">93</el-tag> 潜力评级</li>
-                <li>惯用脚 - 左</li>
-                <li>积极性 - 中</li>
-                <li>熟练角色 - RW,CF,ST</li>
+                <li>
+                  <el-tag type="primary">{{ info.rate }}</el-tag> 综合能力
+                </li>
+                <li>
+                  <el-tag type="primary">{{ info.potential }}</el-tag> 潜力评级
+                </li>
+                <li>惯用脚 - {{ info.foot }}</li>
+                <li>积极性 - {{ info.motivation }}</li>
+                <li>熟练角色 - {{ info.skilledRole }}</li>
               </ul>
             </el-card>
           </el-col>
@@ -66,8 +70,14 @@
           >
             <h5>速度</h5>
             <ul style="display: block">
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;加速度</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;冲刺速度</li>
+              <li>
+                <el-tag type="primary">{{ info.acc }}</el-tag
+                >&nbsp;&nbsp;加速度
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.maxSpeed }}</el-tag
+                >&nbsp;&nbsp;冲刺速度
+              </li>
             </ul>
           </el-card>
           <el-card
@@ -77,12 +87,30 @@
           >
             <h5>射门</h5>
             <ul style="display: block">
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;跑位</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;射术</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;射门力量</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;远射</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;凌空</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;点球</li>
+              <li>
+                <el-tag type="primary">{{ info.runningPosition }}</el-tag
+                >&nbsp;&nbsp;跑位
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.shotSkill }}</el-tag
+                >&nbsp;&nbsp;射术
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.shotStrength }}</el-tag
+                >&nbsp;&nbsp;射门力量
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.longShot }}</el-tag
+                >&nbsp;&nbsp;远射
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.overhead }}</el-tag
+                >&nbsp;&nbsp;凌空
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.penalty }}</el-tag
+                >&nbsp;&nbsp;点球
+              </li>
             </ul>
           </el-card>
           <el-card
@@ -92,12 +120,30 @@
           >
             <h5>传球</h5>
             <ul style="display: block">
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;视野</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;传中</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;任意球</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;短传</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;长传</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;弧线</li>
+              <li>
+                <el-tag type="primary">{{ info.horizon }}</el-tag
+                >&nbsp;&nbsp;视野
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.pass2Center }}</el-tag
+                >&nbsp;&nbsp;传中
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.freeKick }}</el-tag
+                >&nbsp;&nbsp;任意球
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.shortPass }}</el-tag
+                >&nbsp;&nbsp;短传
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.longPass }}</el-tag
+                >&nbsp;&nbsp;长传
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.arcsPass }}</el-tag
+                >&nbsp;&nbsp;弧线
+              </li>
             </ul>
           </el-card>
           <el-card
@@ -107,12 +153,26 @@
           >
             <h5>盘带</h5>
             <ul style="display: block">
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;敏捷</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;平衡</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;反应</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;控球</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;盘带</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;沉着</li>
+              <li>
+                <el-tag type="primary">{{ info.agile }}</el-tag
+                >&nbsp;&nbsp;敏捷
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.balance }}</el-tag
+                >&nbsp;&nbsp;平衡
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.react }}</el-tag
+                >&nbsp;&nbsp;反应
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.control }}</el-tag
+                >&nbsp;&nbsp;控球
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.composure }}</el-tag
+                >&nbsp;&nbsp;沉着
+              </li>
             </ul>
           </el-card>
         </el-row>
@@ -360,11 +420,26 @@
           >
             <h5>防守</h5>
             <ul style="display: block">
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;拦截意识</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;头球</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;防守意识</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;抢断</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;铲断</li>
+              <li>
+                <el-tag type="primary">{{ info.intAware }}</el-tag
+                >&nbsp;&nbsp;拦截意识
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.headShot }}</el-tag
+                >&nbsp;&nbsp;头球
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.defAware }}</el-tag
+                >&nbsp;&nbsp;防守意识
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.steal }}</el-tag
+                >&nbsp;&nbsp;抢断
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.cutoff }}</el-tag
+                >&nbsp;&nbsp;铲断
+              </li>
             </ul>
           </el-card>
           <el-card
@@ -374,10 +449,22 @@
           >
             <h5>身体</h5>
             <ul style="display: block">
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;弹跳</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;体能</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;强壮</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;侵略性</li>
+              <li>
+                <el-tag type="primary">{{ info.bounce }}</el-tag
+                >&nbsp;&nbsp;弹跳
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.fitness }}</el-tag
+                >&nbsp;&nbsp;体能
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.strength }}</el-tag
+                >&nbsp;&nbsp;强壮
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.aggressive }}</el-tag
+                >&nbsp;&nbsp;侵略性
+              </li>
             </ul>
           </el-card>
 
@@ -388,11 +475,26 @@
           >
             <h5>守门</h5>
             <ul style="display: block">
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;GK 飞扑</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;GK 击球</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;GK 开球</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;GK 站位</li>
-              <li><el-tag type="primary">91</el-tag>&nbsp;&nbsp;GK 反应</li>
+              <li>
+                <el-tag type="primary">{{ info.flyPounce }}</el-tag
+                >&nbsp;&nbsp;GK 飞扑
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.hitBall }}</el-tag
+                >&nbsp;&nbsp;GK 击球
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.kickoff }}</el-tag
+                >&nbsp;&nbsp;GK 开球
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.standPosition }}</el-tag
+                >&nbsp;&nbsp;GK 站位
+              </li>
+              <li>
+                <el-tag type="primary">{{ info.gkReact }}</el-tag
+                >&nbsp;&nbsp;GK 反应
+              </li>
             </ul>
           </el-card>
           <el-card
@@ -420,10 +522,24 @@ import * as echarts from 'echarts'
 export default {
   name: 'Player',
   data() {
-    return {}
+    return {
+      info: {}
+    }
   },
   mounted() {
     this.drawRadar()
+  },
+  async created() {
+    const { status, data } = await this.$http.post('scout/getScout', {
+      id: this.$route.params.playerId
+    })
+    // Object.assign(this.info, data.player)
+    // Object.assign(this.info, data.report)
+    this.info = {
+      ...data.player,
+      ...data.report
+    }
+    console.log(this.info)
   },
   methods: {
     drawRadar() {

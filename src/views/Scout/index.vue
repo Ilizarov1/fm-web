@@ -43,13 +43,12 @@
         <el-table-column type="selection"></el-table-column>
         <el-table-column label="姓名">
           <template slot-scope="scope">
-            <el-link :underline="false" href="/player">{{
+            <el-link :underline="false" @click="toPlayer(scope.row.playerId)">{{
               scope.row.name
             }}</el-link>
           </template>
         </el-table-column>
-        <el-table-column label="当前俱乐部" prop="club"></el-table-column>
-        <el-table-column label="位置" prop="position"></el-table-column>
+        <el-table-column label="位置" prop="skilledRole"></el-table-column>
         <el-table-column label="年龄" prop="age"></el-table-column>
         <el-table-column label="来源" prop="source"></el-table-column>
       </el-table>
@@ -58,6 +57,8 @@
 </template>
 
 <script>
+import _ from 'lodash'
+import { mapState, mapActions } from 'vuex'
 export default {
   name: 'index',
   data() {
@@ -65,19 +66,51 @@ export default {
       scoutRepoList: [
         {
           name: 'J.Lingard',
-          club: '曼联',
-          position: 'CAM',
+          skilledRole: 'CAM',
           age: 28,
           source: '球探小组'
         }
       ]
     }
   },
+  computed: {
+    ...mapState(['players']),
+    ...mapState(['reports'])
+  },
   methods: {
+    ...mapActions(['getReport']),
+    // 跳转到报告
     toRepo() {
       this.$router.push('/scoutRepo')
+    },
+    // 跳转到球员具体信息
+    toPlayer(playerId) {
+      this.$router.push({ path: `/player/${playerId}` })
+    },
+    // 初始化列表
+    initTable() {
+      const reports = _.cloneDeep(this.reports)
+      const players = _.cloneDeep(this.players)
+      for (const player of players) {
+        const item = {}
+        Object.assign(item, player)
+        Object.assign(
+          item,
+          reports.find(x => {
+            return x.playerId === player.id
+          })
+        )
+        Object.defineProperty(item, 'source', { value: '球探小组' })
+        this.scoutRepoList.push(item)
+      }
+      console.log('初始化完成', this.scoutRepoList)
     }
-  }
+  },
+  async created() {
+    await this.getReport()
+    this.initTable()
+  },
+  mounted() {}
 }
 </script>
 

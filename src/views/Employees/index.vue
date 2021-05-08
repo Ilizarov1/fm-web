@@ -26,8 +26,8 @@
         <el-table-column label="所属" prop="employGroup"></el-table-column>
         <el-table-column label="具体职位" prop="position"></el-table-column>
         <el-table-column label="操作">
-          <template>
-            <el-button type="primary" size="mini" @click="posVisible = true"
+          <template slot-scope="scope">
+            <el-button type="primary" size="mini" @click="select(scope.row.id)"
               >调整职位</el-button
             >
           </template>
@@ -48,7 +48,7 @@
     <el-dialog :visible.sync="posVisible" title="调整">
       <el-row type="flex" justify="space-around">
         <el-col :span="8">
-          <el-select v-model="posForm.group" @change="changeSelect">
+          <el-select v-model="posForm.employGroup" @change="changeSelect">
             <el-option
               v-for="item in groupSelect"
               :key="item.value"
@@ -68,6 +68,11 @@
             ></el-option>
           </el-select> </el-col
       ></el-row>
+      <el-row>
+        <el-button type="primary" class="submit-button" @click="submit"
+          >确认调整</el-button
+        >
+      </el-row>
     </el-dialog>
   </div>
 </template>
@@ -90,8 +95,9 @@ export default {
       // ],
       posVisible: false,
       posForm: {
-        group: '',
-        position: ''
+        employGroup: '',
+        position: '',
+        id: -1
       },
       groupSelect: [
         {
@@ -157,6 +163,7 @@ export default {
     ...mapState(['employees'])
   },
   methods: {
+    ...mapActions(['getEmployees']),
     changeSelect(e) {
       this.posForm.position = ''
       this.posSelect = []
@@ -174,12 +181,40 @@ export default {
           break
         }
       }
+    },
+    // 提交
+    async submit() {
+      const { status, data } = await this.$http.post(
+        'employee/adjust',
+        this.posForm
+      )
+      this.posVisible = false
+      if (status !== 200) {
+        this.$message.error('error')
+      } else {
+        if (data.msg === 'success') {
+          this.$message.success('调整成功')
+        }
+      }
+      await this.getEmployees()
+    },
+    // 传入选择的id
+    select(id) {
+      this.posForm.id = id
+      this.posVisible = true
     }
+  },
+  mounted() {
+    this.getEmployees()
   }
 }
 </script>
 
 <style scoped>
+.submit-button {
+  margin-top: 20px;
+  margin-left: 550px;
+}
 .pagination {
   margin-right: -5px;
 }

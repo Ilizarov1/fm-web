@@ -8,6 +8,8 @@ export default new Vuex.Store({
   state: {
     players: [],
     employees: [],
+    coaches: [],
+    trainingLst: [],
     status: 200
   },
   mutations: {
@@ -22,6 +24,24 @@ export default new Vuex.Store({
     // 更新员工
     updateEmployees(state, newEmployees) {
       state.employees = newEmployees
+    },
+    // 更新教练
+    updateCoaches(state, newCoaches) {
+      state.coaches = newCoaches
+    }, // 更新训练表
+    updateTrainLst(state, newLst) {
+      for (const x of newLst) {
+        x.item.sort((a, b) => {
+          if (a.trainTime === '上午' && b.trainTime === '下午') {
+            return -1
+          } else if (a.trainTime === '下午' && b.trainTime === '上午') {
+            return 1
+          } else {
+            return 0
+          }
+        })
+      }
+      state.trainingLst = newLst
     }
   },
   actions: {
@@ -41,6 +61,24 @@ export default new Vuex.Store({
         commit('updateStatus', status)
       } else {
         commit('updateEmployees', data)
+      }
+    },
+    async getCoaches({ commit }) {
+      commit('updateStatus', 200)
+      const { status, data } = await axios.get('employee/getCoaches')
+      if (status !== 200) {
+        commit('updateStatus', status)
+      } else {
+        commit('updateCoaches', data)
+      }
+    },
+    async getTrainLst({ commit }) {
+      commit('updateStatus', 200)
+      const { status, data } = await axios.get('schedule/getTrainLst')
+      if (status !== 200) {
+        commit('updateStatus', status)
+      } else {
+        commit('updateTrainLst', data)
       }
     }
   },

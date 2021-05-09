@@ -417,7 +417,7 @@ export default {
       pos: {
         front: ['ST', 'CF', 'RW', 'LW'],
         mid: ['CAM', 'CM', 'LM', 'RM', 'CDM'],
-        back: ['LB', 'CB', 'RB']
+        back: ['LB', 'CB', 'RB', 'GK']
       },
       activeName: '0',
       scoutForm: {},

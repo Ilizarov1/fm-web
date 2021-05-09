@@ -2,7 +2,7 @@
   <div>
     <el-col :span="13">
       <div class="field-1">
-        <div v-if="alterCtrl">
+        <div v-show="alterCtrl">
           <div v-for="(row, i) in formation" :key="i" class="field-row-1">
             <div
               v-for="(col, j) in row"
@@ -16,14 +16,15 @@
                   trigger="click"
                   v-model="visible[col.popIndex]"
                 >
-                  <el-table :data="players" max-height="400px">
-                    <el-table-column
-                      prop="status"
-                      label="状态"
-                    ></el-table-column>
+                  <el-table :data="fstLst" max-height="400px">
+                    <el-table-column label="状态">
+                      <template slot-scope="scope">
+                        {{ getStatusStr(scope.row.status) }}
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="name" label="球员"></el-table-column>
                     <el-table-column
-                      prop="position"
+                      prop="skilledRole"
                       label="位置"
                     ></el-table-column>
                     <el-table-column label="操作">
@@ -41,14 +42,14 @@
                                 true
                               )
                             "
-                            :disabled="scope.row.status === '首发'"
+                            :disabled="scope.row.status === 1"
                             type="primary"
                             >选择</el-button
                           >
                           <el-button
                             size="mini"
                             type="danger"
-                            :disabled="scope.row.status === '未入选'"
+                            :disabled="scope.row.status === 0"
                             @click="
                               choosePlayer(
                                 i,
@@ -100,7 +101,7 @@
             </div>
           </div>
         </div>
-        <div v-else>
+        <div v-show="!alterCtrl">
           <div v-for="(row, i) in formation" :key="i" class="field-row-1">
             <div
               v-for="(col, j) in row"
@@ -148,7 +149,7 @@
         </div>
       </el-row>
       <el-row>
-        <el-table :data="players" max-height="595px">
+        <el-table :data="fstLst" max-height="595px">
           <el-table-column label="位置/角色">
             <template slot-scope="scope">
               <el-tag
@@ -738,7 +739,8 @@ export default {
       replace: 0, // 替补人数 一般联赛7人为上限
       replaceMax: 7,
       replaceBtnCtrl: false,
-      alterReplace: false
+      alterReplace: false,
+      fstLst: []
     }
   },
   methods: {
@@ -760,19 +762,22 @@ export default {
         const name = this.formation[row][col].player
         if (name !== '') {
           // 球员姓名栏非空，之前已经选择过，先复原状态
-          this.players.forEach(x => {
-            if (x.name === name && x.status === '首发') {
-              x.status = '未入选'
+          this.fstLst.forEach(x => {
+            if (x.name === name && x.status === 1) {
+              x.status = 0
+              this.postStatus(x.playerId, 0)
             }
           })
         }
         // 修改选择框
-        this.formation[row][col].player = this.players[index].name
+        this.formation[row][col].player = this.fstLst[index].name
         // 修改球员状态
-        this.players[index].status = '首发'
+        this.fstLst[index].status = 1
+        this.postStatus(this.fstLst[index].playerId, 1)
       } else {
         this.formation[row][col].player = ''
-        this.players[index].status = '未入选'
+        this.fstLst[index].status = 0
+        this.postStatus(this.fstLst[index].playerId, 0)
       }
 
       // 关闭窗口
@@ -784,6 +789,14 @@ export default {
       this.formation[row][col].role = this.formation[row][col].positionLst[
         index
       ].title
+
+      // 修改球员状态
+      const player = this.fstLst.find(
+        x => x.name === this.formation[row][col].player
+      )
+      player.position = this.formation[row][col].title
+      player.role = this.formation[row][col].role
+      this.postPosAndRole(player.playerId, player.position, player.role)
       // 关闭窗口
       this.roleVis[popIndex] = false
     },
@@ -801,7 +814,7 @@ export default {
     },
     // 获得当前球员状态
     getPlayerStatus(name, status) {
-      if (status === '首发') {
+      if (status === 1) {
         for (const row in this.formation) {
           for (const col in this.formation[row]) {
             if (this.formation[row][col].player === name) {
@@ -812,7 +825,7 @@ export default {
             }
           }
         }
-      } else if (status === '未入选') {
+      } else if (status === 0) {
         return '未入选'
       } else {
         return '替补'
@@ -820,7 +833,7 @@ export default {
     },
     // 判断当前首发球员是哪个部分
     getPlayerField(name, status) {
-      if (status === '首发') {
+      if (status === 1) {
         for (const row in this.formation) {
           for (const col in this.formation[row]) {
             if (this.formation[row][col].player === name) {
@@ -828,7 +841,7 @@ export default {
             }
           }
         }
-      } else if (status === '未入选') {
+      } else if (status === 0) {
         return ''
       } else {
         return 'replace'
@@ -846,11 +859,75 @@ export default {
       this.replace--
       this.players[index].status = '未入选'
     },
-    // 修改替补上限
-    alterReplaceMax() {}
+    // 加载一线队成员
+    async load() {
+      const { status, data } = await this.$http.get('fstTeam/getFstPlayers')
+      for (const player of data.players) {
+        const item = {
+          ...player,
+          ...data.fstTeam.find(x => x.playerId === player.id)
+        }
+        this.fstLst.push(item)
+      }
+    },
+    // 获得球员状态
+    getStatusStr(status) {
+      if (status === 0) {
+        return '未入选'
+      } else if (status === 1) {
+        return '首发'
+      } else {
+        return '替补'
+      }
+    },
+    // 向服务器修改球员状态
+    async postStatus(playerId, status) {
+      const fstTeam = {
+        playerId,
+        status
+      }
+      const { data } = await this.$http.post('fstTeam/postStatus', fstTeam)
+      console.log(data)
+    },
+    // 向服务器请求修改球员位置和角色
+    async postPosAndRole(playerId, position, role) {
+      const { data } = await this.$http.post('fstTeam/postPosAndRole', {
+        playerId,
+        position,
+        role
+      })
+      console.log(data)
+    },
+    // 初始化当前阵型
+    initFormation() {
+      for (const player of this.fstLst) {
+        if (player.status === 1) {
+          for (const [rowkey, row] of Object.entries(this.formation)) {
+            for (const [colkey, col] of Object.entries(row)) {
+              if (player.position === col.title) {
+                col.player = player.name
+                col.role = player.role
+                col.class = ''
+                console.log(col.player, col.role, col.class)
+              }
+            }
+          }
+        }
+      }
+      for (const [rowkey, row] of Object.entries(this.formation)) {
+        for (const [colkey, col] of Object.entries(row)) {
+          if (col.player === '') {
+            col.class = 'pos-none '
+          }
+        }
+      }
+      console.log(this.formation)
+    }
   },
-  mounted() {
-    this.saveViewCtrl()
+  mounted() {},
+  async created() {
+    await this.load()
+    this.initFormation()
   },
   computed: {}
 }

@@ -20,14 +20,22 @@
         <el-row :gutter="10" type="flex">
           <el-col :span="15">
             <el-card>
-              <h5>基本信息</h5>
-              <ul style="display: block">
-                <li>姓名 - {{ info.name }}</li>
-                <li>国籍 - {{ info.nation }}</li>
-                <li>年龄 - {{ info.age }}</li>
-                <li>身高 - {{ info.height }} cm</li>
-                <li>体重 - {{ info.weight }} kg</li>
-              </ul>
+              <el-row :gutter="20">
+                <el-col :span="12">
+                  <h5>基本信息</h5>
+                  <ul style="display: block">
+                    <li>姓名 - {{ info.name }}</li>
+                    <li>国籍 - {{ info.nation }}</li>
+                    <li>年龄 - {{ info.age }}</li>
+                    <li>身高 - {{ info.height }} cm</li>
+                    <li>体重 - {{ info.weight }} kg</li>
+                  </ul>
+                </el-col>
+                <el-col :span="12">
+                  <h5>球探建议</h5>
+                  <span>{{ info.suggestions }}</span>
+                </el-col>
+              </el-row>
             </el-card>
           </el-col>
           <el-col :span="9">
@@ -35,10 +43,14 @@
               <h5>概览</h5>
               <ul style="display: block">
                 <li>
-                  <el-tag type="primary">{{ info.rate }}</el-tag> 综合能力
+                  <el-tag :type="tagColor(info.rate)">{{ info.rate }}</el-tag>
+                  综合能力
                 </li>
                 <li>
-                  <el-tag type="primary">{{ info.potential }}</el-tag> 潜力评级
+                  <el-tag :type="tagColor(info.potential)">{{
+                    info.potential
+                  }}</el-tag>
+                  潜力评级
                 </li>
                 <li>惯用脚 - {{ info.foot }}</li>
                 <li>积极性 - {{ info.motivation }}</li>
@@ -71,11 +83,13 @@
             <h5>速度</h5>
             <ul style="display: block">
               <li>
-                <el-tag type="primary">{{ info.acc }}</el-tag
+                <el-tag :type="tagColor(info.acc)">{{ info.acc }}</el-tag
                 >&nbsp;&nbsp;加速度
               </li>
               <li>
-                <el-tag type="primary">{{ info.maxSpeed }}</el-tag
+                <el-tag :type="tagColor(info.maxSpeed)">{{
+                  info.maxSpeed
+                }}</el-tag
                 >&nbsp;&nbsp;冲刺速度
               </li>
             </ul>
@@ -88,27 +102,39 @@
             <h5>射门</h5>
             <ul style="display: block">
               <li>
-                <el-tag type="primary">{{ info.runningPosition }}</el-tag
+                <el-tag :type="tagColor(info.runningPosition)">{{
+                  info.runningPosition
+                }}</el-tag
                 >&nbsp;&nbsp;跑位
               </li>
               <li>
-                <el-tag type="primary">{{ info.shotSkill }}</el-tag
+                <el-tag :type="tagColor(info.shotSkill)">{{
+                  info.shotSkill
+                }}</el-tag
                 >&nbsp;&nbsp;射术
               </li>
               <li>
-                <el-tag type="primary">{{ info.shotStrength }}</el-tag
+                <el-tag :type="tagColor(info.shotStrength)">{{
+                  info.shotStrength
+                }}</el-tag
                 >&nbsp;&nbsp;射门力量
               </li>
               <li>
-                <el-tag type="primary">{{ info.longShot }}</el-tag
+                <el-tag :type="tagColor(info.longShot)">{{
+                  info.longShot
+                }}</el-tag
                 >&nbsp;&nbsp;远射
               </li>
               <li>
-                <el-tag type="primary">{{ info.overhead }}</el-tag
+                <el-tag :type="tagColor(info.overhead)">{{
+                  info.overhead
+                }}</el-tag
                 >&nbsp;&nbsp;凌空
               </li>
               <li>
-                <el-tag type="primary">{{ info.penalty }}</el-tag
+                <el-tag :type="tagColor(info.penalty)">{{
+                  info.penalty
+                }}</el-tag
                 >&nbsp;&nbsp;点球
               </li>
             </ul>
@@ -121,27 +147,39 @@
             <h5>传球</h5>
             <ul style="display: block">
               <li>
-                <el-tag type="primary">{{ info.horizon }}</el-tag
+                <el-tag :type="tagColor(info.horizon)">{{
+                  info.horizon
+                }}</el-tag
                 >&nbsp;&nbsp;视野
               </li>
               <li>
-                <el-tag type="primary">{{ info.pass2Center }}</el-tag
+                <el-tag :type="tagColor(info.pass2center)">{{
+                  info.pass2center
+                }}</el-tag
                 >&nbsp;&nbsp;传中
               </li>
               <li>
-                <el-tag type="primary">{{ info.freeKick }}</el-tag
+                <el-tag :type="tagColor(info.freeKick)">{{
+                  info.freeKick
+                }}</el-tag
                 >&nbsp;&nbsp;任意球
               </li>
               <li>
-                <el-tag type="primary">{{ info.shortPass }}</el-tag
+                <el-tag :type="tagColor(info.shortPass)">{{
+                  info.shortPass
+                }}</el-tag
                 >&nbsp;&nbsp;短传
               </li>
               <li>
-                <el-tag type="primary">{{ info.longPass }}</el-tag
+                <el-tag :type="tagColor(info.longPass)">{{
+                  info.longPass
+                }}</el-tag
                 >&nbsp;&nbsp;长传
               </li>
               <li>
-                <el-tag type="primary">{{ info.arcsPass }}</el-tag
+                <el-tag :type="tagColor(info.arcsPass)">{{
+                  info.arcsPass
+                }}</el-tag
                 >&nbsp;&nbsp;弧线
               </li>
             </ul>
@@ -154,23 +192,29 @@
             <h5>盘带</h5>
             <ul style="display: block">
               <li>
-                <el-tag type="primary">{{ info.agile }}</el-tag
+                <el-tag :type="tagColor(info.agile)">{{ info.agile }}</el-tag
                 >&nbsp;&nbsp;敏捷
               </li>
               <li>
-                <el-tag type="primary">{{ info.balance }}</el-tag
+                <el-tag :type="tagColor(info.balance)">{{
+                  info.balance
+                }}</el-tag
                 >&nbsp;&nbsp;平衡
               </li>
               <li>
-                <el-tag type="primary">{{ info.react }}</el-tag
+                <el-tag :type="tagColor(info.react)">{{ info.react }}</el-tag
                 >&nbsp;&nbsp;反应
               </li>
               <li>
-                <el-tag type="primary">{{ info.control }}</el-tag
+                <el-tag :type="tagColor(info.control)">{{
+                  info.control
+                }}</el-tag
                 >&nbsp;&nbsp;控球
               </li>
               <li>
-                <el-tag type="primary">{{ info.composure }}</el-tag
+                <el-tag :type="tagColor(info.composure)">{{
+                  info.composure
+                }}</el-tag
                 >&nbsp;&nbsp;沉着
               </li>
             </ul>
@@ -189,21 +233,21 @@
                 <div class="position-box">&nbsp;</div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.LS">
                   LS
                   <br />
                   熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.ST">
                   ST
                   <br />
                   熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.RS">
                   RS
                   <br />
                   熟练
@@ -214,35 +258,35 @@
             <!--            CF-->
             <div class="line-row">
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.LW">
                   LW
                   <br />
                   熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.LF">
                   LF
                   <br />
                   熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.CF">
                   CF
                   <br />
                   熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.RF">
                   RF
                   <br />
                   熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.RW">
                   RW
                   <br />
                   熟练
@@ -253,21 +297,21 @@
             <div class="line-row">
               <div class="line-col"></div>
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.LAM">
                   LAM
                   <br />
                   熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.CAM">
                   CAM
                   <br />
                   熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.RAM">
                   RAM
                   <br />
                   熟练
@@ -278,35 +322,35 @@
             <!--            CM-->
             <div class="line-row">
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.LM">
                   LM
                   <br />
                   熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.LCM">
                   LCM
                   <br />
                   熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.CM">
                   CM
                   <br />
                   熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.RCM">
                   RCM
                   <br />
                   熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-green">
+                <div :class="positionClass.RM">
                   RM
                   <br />
                   熟练
@@ -316,76 +360,76 @@
             <!--            CDM-->
             <div class="line-row">
               <div class="line-col">
-                <div class="position-tab position-yellow">
+                <div :class="positionClass.LWB">
                   LWB
                   <br />
-                  一般
+                  熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-yellow">
+                <div :class="positionClass.LDM">
                   LDM
                   <br />
-                  一般
+                  熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-yellow">
+                <div :class="positionClass.CDM">
                   CDM
                   <br />
-                  一般
+                  熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-yellow">
+                <div :class="positionClass.RDM">
                   RDM
                   <br />
-                  一般
+                  熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-yellow">
+                <div :class="positionClass.RWB">
                   RWB
                   <br />
-                  一般
+                  熟练
                 </div>
               </div>
             </div>
             <!--            CB-->
             <div class="line-row">
               <div class="line-col">
-                <div class="position-tab position-red">
+                <div :class="positionClass.LB">
                   LB
                   <br />
-                  不熟练
+                  熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-red">
+                <div :class="positionClass.LCB">
                   LCB
                   <br />
-                  不熟练
+                  熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-red">
+                <div :class="positionClass.CB">
                   CB
                   <br />
-                  不熟练
+                  熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-red">
+                <div :class="positionClass.RCB">
                   RCB
                   <br />
-                  不熟练
+                  熟练
                 </div>
               </div>
               <div class="line-col">
-                <div class="position-tab position-red">
+                <div :class="positionClass.RB">
                   RB
                   <br />
-                  不熟练
+                  熟练
                 </div>
               </div>
             </div>
@@ -394,10 +438,10 @@
               <div class="line-col"></div>
               <div class="line-col"></div>
               <div class="line-col">
-                <div class="position-tab position-red">
+                <div :class="positionClass.GK">
                   GK
                   <br />
-                  不熟练
+                  熟练
                 </div>
               </div>
               <div class="line-col"></div>
@@ -421,23 +465,29 @@
             <h5>防守</h5>
             <ul style="display: block">
               <li>
-                <el-tag type="primary">{{ info.intAware }}</el-tag
+                <el-tag :type="tagColor(info.intAware)">{{
+                  info.intAware
+                }}</el-tag
                 >&nbsp;&nbsp;拦截意识
               </li>
               <li>
-                <el-tag type="primary">{{ info.headShot }}</el-tag
+                <el-tag :type="tagColor(info.headShot)">{{
+                  info.headShot
+                }}</el-tag
                 >&nbsp;&nbsp;头球
               </li>
               <li>
-                <el-tag type="primary">{{ info.defAware }}</el-tag
+                <el-tag :type="tagColor(info.defAware)">{{
+                  info.defAware
+                }}</el-tag
                 >&nbsp;&nbsp;防守意识
               </li>
               <li>
-                <el-tag type="primary">{{ info.steal }}</el-tag
+                <el-tag :type="tagColor(info.steal)">{{ info.steal }}</el-tag
                 >&nbsp;&nbsp;抢断
               </li>
               <li>
-                <el-tag type="primary">{{ info.cutoff }}</el-tag
+                <el-tag :type="tagColor(info.cutoff)">{{ info.cutoff }}</el-tag
                 >&nbsp;&nbsp;铲断
               </li>
             </ul>
@@ -450,19 +500,25 @@
             <h5>身体</h5>
             <ul style="display: block">
               <li>
-                <el-tag type="primary">{{ info.bounce }}</el-tag
+                <el-tag :type="tagColor(info.bounce)">{{ info.bounce }}</el-tag
                 >&nbsp;&nbsp;弹跳
               </li>
               <li>
-                <el-tag type="primary">{{ info.fitness }}</el-tag
+                <el-tag :type="tagColor(info.fitness)">{{
+                  info.fitness
+                }}</el-tag
                 >&nbsp;&nbsp;体能
               </li>
               <li>
-                <el-tag type="primary">{{ info.strength }}</el-tag
+                <el-tag :type="tagColor(info.strength)">{{
+                  info.strength
+                }}</el-tag
                 >&nbsp;&nbsp;强壮
               </li>
               <li>
-                <el-tag type="primary">{{ info.aggressive }}</el-tag
+                <el-tag :type="tagColor(info.aggressive)">{{
+                  info.aggressive
+                }}</el-tag
                 >&nbsp;&nbsp;侵略性
               </li>
             </ul>
@@ -476,23 +532,33 @@
             <h5>守门</h5>
             <ul style="display: block">
               <li>
-                <el-tag type="primary">{{ info.flyPounce }}</el-tag
+                <el-tag :type="tagColor(info.flyPounce)">{{
+                  info.flyPounce
+                }}</el-tag
                 >&nbsp;&nbsp;GK 飞扑
               </li>
               <li>
-                <el-tag type="primary">{{ info.hitBall }}</el-tag
+                <el-tag :type="tagColor(info.hitBall)">{{
+                  info.hitBall
+                }}</el-tag
                 >&nbsp;&nbsp;GK 击球
               </li>
               <li>
-                <el-tag type="primary">{{ info.kickoff }}</el-tag
+                <el-tag :type="tagColor(info.kickoff)">{{
+                  info.kickoff
+                }}</el-tag
                 >&nbsp;&nbsp;GK 开球
               </li>
               <li>
-                <el-tag type="primary">{{ info.standPosition }}</el-tag
+                <el-tag :type="tagColor(info.standPosition)">{{
+                  info.standPosition
+                }}</el-tag
                 >&nbsp;&nbsp;GK 站位
               </li>
               <li>
-                <el-tag type="primary">{{ info.gkReact }}</el-tag
+                <el-tag :type="tagColor(info.gkReact)">{{
+                  info.gkReact
+                }}</el-tag
                 >&nbsp;&nbsp;GK 反应
               </li>
             </ul>
@@ -502,14 +568,35 @@
             style="height: 100%"
             shadow="hover"
           >
-            <h5>特点</h5>
-            <ul style="display: block">
-              <li># 远程射手</li>
-              <li># 盘带高手</li>
-              <li># 组织核心</li>
-              <li># 全能前锋</li>
-              <li># 任意球专家</li>
-            </ul>
+            <el-row>
+              <h5>优点</h5>
+              <ul style="display: block">
+                <li
+                  v-for="(item, index) in advantages"
+                  :key="index"
+                  style="color: #42B983;"
+                >
+                  # {{ item }}
+                </li>
+              </ul>
+            </el-row>
+            <el-row>
+              <h5>缺点</h5>
+              <ul>
+                <li
+                  v-for="(item, index) in disadvantages"
+                  :key="index"
+                  style="color: #F56C6C;"
+                >
+                  # {{ item }}
+                </li>
+                <!--              <li># 远程射手</li>-->
+                <!--              <li># 盘带高手</li>-->
+                <!--              <li># 组织核心</li>-->
+                <!--              <li># 全能前锋</li>-->
+                <!--              <li># 任意球专家</li>-->
+              </ul>
+            </el-row>
           </el-card>
         </el-row>
       </el-col>
@@ -523,13 +610,49 @@ export default {
   name: 'Player',
   data() {
     return {
-      info: {}
+      info: {},
+      advantages: [],
+      disadvantages: [],
+      avaPoint: {
+        pac: 0,
+        pas: 0,
+        sho: 0,
+        dri: 0,
+        def: 0,
+        phy: 0
+      },
+      positionClass: {
+        LS: 'position-tab position-green position-hidden',
+        ST: 'position-tab position-green position-hidden',
+        RS: 'position-tab position-green position-hidden',
+        LW: 'position-tab position-green position-hidden',
+        LF: 'position-tab position-green position-hidden',
+        CF: 'position-tab position-green position-hidden',
+        RF: 'position-tab position-green position-hidden',
+        RW: 'position-tab position-green position-hidden',
+        LAM: 'position-tab position-green position-hidden',
+        CAM: 'position-tab position-green position-hidden',
+        RAM: 'position-tab position-green position-hidden',
+        LM: 'position-tab position-green position-hidden',
+        LCM: 'position-tab position-green position-hidden',
+        CM: 'position-tab position-green position-hidden',
+        RCM: 'position-tab position-green position-hidden',
+        RM: 'position-tab position-green position-hidden',
+        LWB: 'position-tab position-green position-hidden',
+        LDM: 'position-tab position-green position-hidden',
+        CDM: 'position-tab position-green position-hidden',
+        RDM: 'position-tab position-green position-hidden',
+        RWB: 'position-tab position-green position-hidden',
+        LB: 'position-tab position-green position-hidden',
+        LCB: 'position-tab position-green position-hidden',
+        CB: 'position-tab position-green position-hidden',
+        RCB: 'position-tab position-green position-hidden',
+        RB: 'position-tab position-green position-hidden',
+        GK: 'position-tab position-green position-hidden'
+      }
     }
   },
-  mounted() {
-    this.drawRadar()
-  },
-  async created() {
+  async mounted() {
     const { status, data } = await this.$http.post('scout/getScout', {
       id: this.$route.params.playerId
     })
@@ -539,8 +662,22 @@ export default {
       ...data.player,
       ...data.report
     }
-    console.log(this.info)
+    this.advantages = this.info.advantages.split(',')
+    this.disadvantages = this.info.disadvantages.split(',')
+    this.avaPoint.pac = this.info.pac
+    this.avaPoint.pas = this.info.pas
+    this.avaPoint.sho = this.info.sho
+    this.avaPoint.dri = this.info.dri
+    this.avaPoint.phy = this.info.phy
+    this.avaPoint.def = this.info.def
+
+    const roles = this.info.skilledRole.split(',')
+    for (const role of roles) {
+      this.positionClass[role] = 'position-tab position-green '
+    }
+    this.drawRadar()
   },
+  async created() {},
   methods: {
     drawRadar() {
       const playRadar = echarts.init(document.getElementById('player-radar'))
@@ -566,7 +703,8 @@ export default {
             { name: '传球', max: 100 },
             { name: '射门', max: 100 },
             { name: '盘带', max: 100 },
-            { name: '防守', max: 100 }
+            { name: '防守', max: 100 },
+            { name: '身体', max: 100 }
           ]
         },
         series: [
@@ -576,13 +714,30 @@ export default {
             // areaStyle: {normal: {}},
             data: [
               {
-                value: [100, 100, 100, 100, 45],
+                value: [
+                  this.avaPoint.pac,
+                  this.avaPoint.pas,
+                  this.avaPoint.sho,
+                  this.avaPoint.dri,
+                  this.avaPoint.def,
+                  this.avaPoint.phy
+                ],
                 name: '能力'
               }
             ]
           }
         ]
       })
+    },
+    // 改变标签颜色
+    tagColor(val) {
+      if (val < 50) {
+        return 'danger'
+      } else if (val >= 50 && val < 80) {
+        return 'warning'
+      } else {
+        return 'primary'
+      }
     }
   }
 }
@@ -702,5 +857,8 @@ li {
 }
 .position-red {
   background-color: #d13913;
+}
+.position-hidden {
+  visibility: hidden;
 }
 </style>

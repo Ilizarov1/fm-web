@@ -56,15 +56,15 @@
                 <el-row>
                   <div class="sm-field">
                     <div
-                      v-for="(item, i) in fieldWidth.elemStyle"
+                      v-for="(row, i) in fieldWidth.elemStyle"
                       :key="i"
                       class="field-row"
                     >
                       <div
-                        v-for="(style, j) in item"
+                        v-for="(col, j) in row"
                         :key="j"
                         :class="'field-col ' + fieldWidth.widthClass"
-                        :style="formatPosStyle(i, j, style)"
+                        :style="col.style"
                       ></div>
                     </div>
                     <div class="field-row">
@@ -559,7 +559,9 @@
                         v-for="(col, j) in row"
                         :key="j"
                         :class="
-                          j === 'ctrl' ? 'def-col-ctrl ' : 'def-col-1 ' + col
+                          j === 'ctrl'
+                            ? 'def-col-ctrl '
+                            : 'def-col-1 ' + col.class
                         "
                         :id="j === 'ctrl' ? 'line' + i : ''"
                       >
@@ -567,7 +569,7 @@
                           {{ defField.encounterLine.title }}<br />
                           遭遇线
                         </div>
-                        <div v-if="i === '4' && j === 'ctrl'" class="ctrl-text">
+                        <div v-if="i === '5' && j === 'ctrl'" class="ctrl-text">
                           {{ defField.defLine.title }}<br />
                           后防线
                         </div>
@@ -590,11 +592,16 @@
 
 <script>
 import ChooseLineUp from 'components/Tactics/ChooseLineUp'
+import _ from 'lodash'
 export default {
   name: 'index',
   components: { ChooseLineUp },
   data() {
     return {
+      temp: {
+        copy: false,
+        posCtrl: {}
+      },
       // 缩略信息
       abbr: {
         stage1: {
@@ -628,46 +635,136 @@ export default {
       fieldWidth: {
         elemStyle: {
           0: {
-            0: 'background: transparent;',
-            1: 'background: transparent;',
-            2: '',
-            3: 'background: transparent;',
-            4: 'background: transparent;'
+            0: {
+              title: '',
+              style: 'background: transparent;'
+            },
+            1: {
+              title: 'LS',
+              style: 'background: transparent;'
+            },
+            2: {
+              title: 'ST',
+              style: 'background: transparent;'
+            },
+            3: {
+              title: 'RS',
+              style: 'background: transparent;'
+            },
+            4: {
+              title: '',
+              style: 'background: transparent;'
+            }
           },
           1: {
-            0: '',
-            1: 'background: transparent;',
-            2: 'background: transparent;',
-            3: 'background: transparent;',
-            4: ''
+            0: {
+              title: 'LW',
+              style: 'background: transparent;'
+            },
+            1: {
+              title: 'LF',
+              style: 'background: transparent;'
+            },
+            2: {
+              title: 'CF',
+              style: 'background: transparent;'
+            },
+            3: {
+              title: 'RF',
+              style: 'background: transparent;'
+            },
+            4: {
+              title: 'RW',
+              style: 'background: transparent;'
+            }
           },
           2: {
-            0: 'background: transparent;',
-            1: 'background: transparent;',
-            2: 'background: transparent;',
-            3: 'background: transparent;',
-            4: 'background: transparent;'
+            0: {
+              title: '',
+              style: 'background: transparent;'
+            },
+            1: {
+              title: 'LAM',
+              style: 'background: transparent;'
+            },
+            2: {
+              title: 'CAM',
+              style: 'background: transparent;'
+            },
+            3: {
+              title: 'RAM',
+              style: 'background: transparent;'
+            },
+            4: {
+              title: '',
+              style: 'background: transparent;'
+            }
           },
           3: {
-            0: 'background: transparent;',
-            1: '',
-            2: 'background: transparent;',
-            3: '',
-            4: 'background: transparent;'
+            0: {
+              title: 'LM',
+              style: 'background: transparent;'
+            },
+            1: {
+              title: 'LCM',
+              style: 'background: transparent;'
+            },
+            2: {
+              title: 'CM',
+              style: 'background: transparent;'
+            },
+            3: {
+              title: 'RCM',
+              style: 'background: transparent;'
+            },
+            4: {
+              title: 'RM',
+              style: 'background: transparent;'
+            }
           },
           4: {
-            0: 'background: transparent;',
-            1: 'background: transparent;',
-            2: '',
-            3: 'background: transparent;',
-            4: 'background: transparent;'
+            0: {
+              title: 'LWB',
+              style: 'background: transparent;'
+            },
+            1: {
+              title: 'LDM',
+              style: 'background: transparent;'
+            },
+            2: {
+              title: 'CDM',
+              style: 'background: transparent;'
+            },
+            3: {
+              title: 'RDM',
+              style: 'background: transparent;'
+            },
+            4: {
+              title: 'RWB',
+              style: 'background: transparent;'
+            }
           },
           5: {
-            0: '',
-            1: '',
-            2: 'background: transparent;display: none;',
-            3: '',
-            4: ''
+            0: {
+              title: 'LB',
+              style: 'background: transparent;'
+            },
+            1: {
+              title: 'LCB',
+              style: 'background: transparent;'
+            },
+            2: {
+              title: 'CB',
+              style: 'background: transparent;'
+            },
+            3: {
+              title: 'RCB',
+              style: 'background: transparent;'
+            },
+            4: {
+              title: 'RB',
+              style: 'background: transparent;'
+            }
           }
         },
         slider: {
@@ -760,42 +857,128 @@ export default {
       defField: {
         posCtrl: {
           0: {
-            0: '',
-            1: '',
-            2: '',
+            0: {
+              title: 'LS',
+              class: 'col-hidden'
+            },
+            1: {
+              title: 'ST',
+              class: 'col-hidden'
+            },
+            2: {
+              title: 'RS',
+              class: 'col-hidden'
+            },
             ctrl: ''
           },
           1: {
-            0: '',
-            1: '',
-            2: '',
-            3: '',
-            4: ''
+            0: {
+              title: 'LW',
+              class: 'col-hidden'
+            },
+            1: {
+              title: 'LF',
+              class: 'col-hidden'
+            },
+            2: {
+              title: 'CF',
+              class: 'col-hidden'
+            },
+            3: {
+              title: 'RF',
+              class: 'col-hidden'
+            },
+            4: {
+              title: 'RW',
+              class: 'col-hidden'
+            }
           },
           2: {
-            0: '',
-            1: '',
-            2: '',
-            3: '',
-            4: ''
+            0: {
+              title: 'LAM',
+              class: 'col-hidden'
+            },
+            1: {
+              title: 'CAM',
+              class: 'col-hidden'
+            },
+            2: {
+              title: 'RAM',
+              class: 'col-hidden'
+            }
           },
           3: {
-            0: '',
-            1: '',
-            2: '',
-            3: '',
-            4: ''
+            0: {
+              title: 'LM',
+              class: 'col-hidden'
+            },
+            1: {
+              title: 'LCM',
+              class: 'col-hidden'
+            },
+            2: {
+              title: 'CM',
+              class: 'col-hidden'
+            },
+            3: {
+              title: 'RCM',
+              class: 'col-hidden'
+            },
+            4: {
+              title: 'RM',
+              class: 'col-hidden'
+            }
           },
           4: {
-            0: '',
-            1: '',
-            2: '',
-            3: '',
-            4: '',
-            ctrl: ''
+            0: {
+              title: 'LWB',
+              class: 'col-hidden'
+            },
+            1: {
+              title: 'LDM',
+              class: 'col-hidden'
+            },
+            2: {
+              title: 'CDM',
+              class: 'col-hidden'
+            },
+            3: {
+              title: 'RDM',
+              class: 'col-hidden'
+            },
+            4: {
+              title: 'RWB',
+              class: 'col-hidden'
+            }
           },
           5: {
-            0: ''
+            0: {
+              title: 'LB',
+              class: 'col-hidden'
+            },
+            1: {
+              title: 'LCB',
+              class: 'col-hidden'
+            },
+            2: {
+              title: 'CB',
+              class: 'col-hidden'
+            },
+            3: {
+              title: 'RCB',
+              class: 'col-hidden'
+            },
+            4: {
+              title: 'RB',
+              class: 'col-hidden'
+            },
+            ctrl: ''
+          },
+          6: {
+            0: {
+              title: 'GK',
+              class: 'col-hidden'
+            }
           }
         },
         defLine: {
@@ -860,10 +1043,16 @@ export default {
         if (key !== index) this.abbrInfo[key] = true
       })
       // 更换展开class
-      this.expandClass[index]
-        ? (this.expandClass[index] = '')
-        : (this.expandClass[index] =
-            'stage-expand-' + index.replace('stage', ''))
+      if (this.expandClass[index]) {
+        this.expandClass[index] = ''
+        this.setStorage()
+      } else {
+        this.expandClass[index] = 'stage-expand-' + index.replace('stage', '')
+      }
+      // this.expandClass[index]
+      //   ? (this.expandClass[index] = '')
+      //   : (this.expandClass[index] =
+      //       'stage-expand-' + index.replace('stage', ''))
       // 更新缩略图
       this.abbrInfo[index]
         ? (this.abbrInfo[index] = false)
@@ -898,18 +1087,63 @@ export default {
       else return '极度拉开'
     },
     // 如果中间的位置是空的就把两边往里靠
-    formatPosStyle(i, j, style) {
-      const centerStyleStr = this.fieldWidth.elemStyle[i][2]
-      if (centerStyleStr.indexOf('display: none;') >= 0) {
-        if (j === '1' || j === '3') {
-          return style + 'margin: 0 10px;'
+    // formatPosStyle(i, j, style) {
+    //   const centerStyleStr = this.fieldWidth.elemStyle[i][2]
+    //   if (centerStyleStr.indexOf('display: none;') >= 0) {
+    //     if (j === '1' || j === '3') {
+    //       return style + 'margin: 0 10px;'
+    //     }
+    //     if (j === '0') {
+    //       return style + 'margin-right: 20px;'
+    //     }
+    //     if (j === '4') return style + 'margin-left: 20px;'
+    //   }
+    //   return style
+    // },
+    // 根据阵型布置
+    async initFormation() {
+      const { data } = await this.$http.get('fstTeam/getFstPlayers')
+      const fstLst = []
+      for (const player of data.players) {
+        const item = {
+          ...player,
+          ...data.fstTeam.find(x => x.playerId === player.id)
         }
-        if (j === '0') {
-          return style + 'margin-right: 20px;'
-        }
-        if (j === '4') return style + 'margin-left: 20px;'
+        fstLst.push(item)
       }
-      return style
+
+      for (const player of fstLst) {
+        if (player.status === 1) {
+          for (const [rowkey, row] of Object.entries(
+            this.fieldWidth.elemStyle
+          )) {
+            for (const [colkey, col] of Object.entries(row)) {
+              if (player.position === col.title) {
+                col.style = ''
+              }
+            }
+          }
+        }
+      }
+      for (const player of fstLst) {
+        if (player.status === 1) {
+          for (const [rowkey, row] of Object.entries(this.defField.posCtrl)) {
+            for (const [colkey, col] of Object.entries(row)) {
+              if (colkey !== 'ctrl' && player.position === col.title) {
+                col.class = ''
+                console.log(player.position)
+              }
+            }
+          }
+        }
+      }
+      // for (const [rowkey, row] of Object.entries(this.fieldWidth.elemStyle)) {
+      //   for (const [colkey, col] of Object.entries(row)) {
+      //     if (col.player === '') {
+      //       col.col = ''
+      //     }
+      //   }
+      // }
     },
     // 组织传空当按钮
     pass2SpaceBtn() {
@@ -1283,27 +1517,32 @@ export default {
     // 后防线控制
     defLine(val) {
       if (val === 0) {
-        this.defField.rowClass['4'] = 'def-row-1 '
+        this.defField.rowClass['5'] = 'def-row-1 '
         this.defField.defLine.title = '后防线后撤'
       } else if (val === 50) {
-        this.defField.rowClass['4'] = 'def-row-2 '
+        this.defField.rowClass['5'] = 'def-row-2 '
         this.defField.defLine.title = '标准后防线'
       } else if (val === 100) {
-        this.defField.rowClass['4'] = 'def-row-3 '
+        this.defField.rowClass['5'] = 'def-row-3 '
         this.defField.defLine.title = '后防线前压'
       }
     },
     // 防守宽度控制
     defWidthCtrl(val) {
+      if (!this.temp.copy) {
+        this.temp.posCtrl = _.cloneDeep(this.defField.posCtrl)
+        this.temp.copy = true
+      }
       const changeWidth = className => {
         for (const row in this.defField.posCtrl) {
-          if (row === '4') {
+          if (row === '5') {
             for (const col in this.defField.posCtrl[row]) {
-              this.defField.posCtrl[row][col] = className + ' '
+              this.defField.posCtrl[row][col].class += ' ' + className
             }
           }
         }
       }
+      this.defField.posCtrl = _.cloneDeep(this.temp.posCtrl)
       if (val === 0) {
         changeWidth('def-width-1')
       } else if (val === 50) {
@@ -1387,7 +1626,15 @@ export default {
         this.defField.offside.val = ''
         this.defField.offside.title = ''
       }
-    }
+    },
+    // 存取配置
+    setStorage() {
+      window.localStorage.setItem(
+        'closeDef',
+        JSON.stringify(this.defField.closeDef)
+      )
+    },
+    getStorage() {}
   },
   watch: {
     'fieldWidth.slider.title': {
@@ -1512,6 +1759,9 @@ export default {
       deep: true,
       immediate: true
     }
+  },
+  mounted() {
+    this.initFormation()
   }
 }
 </script>
@@ -1700,19 +1950,19 @@ export default {
     background: #ffffff;
   }
   .field-col-width-1 {
-    margin: 0 3px;
+    margin: 0 1px;
   }
   .field-col-width-2 {
-    margin: 0 4px;
+    margin: 0 3px;
   }
   .field-col-width-3 {
     margin: 0 5px;
   }
   .field-col-width-4 {
-    margin: 0 6px;
+    margin: 0 7px;
   }
   .field-col-width-5 {
-    margin: 0 7px;
+    margin: 0 9px;
   }
 }
 
@@ -1813,18 +2063,18 @@ export default {
   width: 192px;
   top: 30px;
   left: 44px;
-  margin: 0 0 15px 0;
+  margin: 0 0 13px 0;
   .def-col-1 {
-    height: 20px;
-    width: 20px;
-    margin: 0 3px;
-    border-radius: 20px;
+    height: 16px;
+    width: 16px;
+    margin: 0 5px;
+    border-radius: 16px;
     display: inline-block;
     background-color: #f2f6fc;
   }
   .def-col-ctrl {
     position: absolute;
-    top: 7px;
+    top: 6px;
     left: 0;
     height: 5px;
     width: 250px;
@@ -1855,5 +2105,8 @@ export default {
 }
 .def-width-3 {
   margin: 0 7px !important;
+}
+.col-hidden {
+  background: transparent !important;
 }
 </style>

@@ -896,7 +896,6 @@ export default {
         position,
         role
       })
-      console.log(data)
     },
     // 初始化当前阵型
     initFormation() {
@@ -908,7 +907,6 @@ export default {
                 col.player = player.name
                 col.role = player.role
                 col.class = ''
-                console.log(col.player, col.role, col.class)
               }
             }
           }
@@ -921,7 +919,6 @@ export default {
           }
         }
       }
-      console.log(this.formation)
     }
   },
   mounted() {},

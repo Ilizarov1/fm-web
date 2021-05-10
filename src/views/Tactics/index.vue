@@ -1045,7 +1045,7 @@ export default {
       // 更换展开class
       if (this.expandClass[index]) {
         this.expandClass[index] = ''
-        this.setStorage()
+        this.setStorage(index)
       } else {
         this.expandClass[index] = 'stage-expand-' + index.replace('stage', '')
       }
@@ -1131,7 +1131,6 @@ export default {
             for (const [colkey, col] of Object.entries(row)) {
               if (colkey !== 'ctrl' && player.position === col.title) {
                 col.class = ''
-                console.log(player.position)
               }
             }
           }
@@ -1153,7 +1152,6 @@ export default {
     },
     // 区域插上控制（4选2）
     up2Restricted(way) {
-      console.log('点到区域了', way)
       let exclusive = null
       // 找出互斥项
       switch (way) {
@@ -1628,13 +1626,100 @@ export default {
       }
     },
     // 存取配置
-    setStorage() {
-      window.localStorage.setItem(
-        'closeDef',
-        JSON.stringify(this.defField.closeDef)
-      )
+    setStorage(stage) {
+      let confStr = ''
+      switch (stage) {
+        case 'stage1':
+          confStr = JSON.stringify(this.getStage1Conf())
+          window.localStorage.setItem('stage1', confStr)
+          this.setStorage2DB(confStr, 'stage1')
+          break
+        case 'stage2':
+          confStr = JSON.stringify(this.getStage2Conf())
+          window.localStorage.setItem('stage2', confStr)
+          this.setStorage2DB(confStr, 'stage2')
+          break
+        case 'stage3':
+          confStr = JSON.stringify(this.getStage3Conf())
+          window.localStorage.setItem('stage3', confStr)
+          this.setStorage2DB(confStr, 'stage3')
+          break
+      }
     },
-    getStorage() {}
+    getStorage() {
+      const stage1Conf = JSON.parse(window.localStorage.getItem('stage1'))
+      const stage2Conf = JSON.parse(window.localStorage.getItem('stage2'))
+      const stage3Conf = JSON.parse(window.localStorage.getItem('stage3'))
+      if (stage1Conf != null) {
+        // const temp=this.fieldWidth
+        Object.assign(this.fieldWidth, stage1Conf.fieldWidth)
+        Object.assign(this.organization, stage1Conf.organization)
+        Object.assign(this.area, stage1Conf.area)
+      }
+      if (stage2Conf != null) {
+        Object.assign(this.winBall, stage2Conf.winBall)
+        Object.assign(this.loseBall, stage2Conf.loseBall)
+        Object.assign(this.gkBall, stage2Conf.gkBall)
+      }
+      if (stage3Conf != null) {
+        Object.assign(this.defField, stage3Conf)
+      }
+    },
+    // 整合 stage1 的配置
+    getStage1Conf() {
+      const fieldWidth = {
+        slider: _.cloneDeep(this.fieldWidth.slider),
+        widthClass: _.cloneDeep(this.fieldWidth.widthClass)
+      }
+      const organization = _.cloneDeep(this.organization)
+      const area = _.cloneDeep(this.area)
+      return {
+        fieldWidth,
+        organization,
+        area
+      }
+    },
+    // 整合 stage2 的配置
+    getStage2Conf() {
+      const winBall = _.cloneDeep(this.winBall)
+      const loseBall = _.cloneDeep(this.loseBall)
+      const gkBall = _.cloneDeep(this.gkBall)
+      return {
+        winBall,
+        loseBall,
+        gkBall
+      }
+    },
+    // 整合 stage3 的配置
+    getStage3Conf() {
+      const defLine = _.cloneDeep(this.defField.defLine)
+      const encounterLine = _.cloneDeep(this.defField.encounterLine)
+      const defWidth = _.cloneDeep(this.defField.rowClass)
+      const closeDef = _.cloneDeep(this.defField.closeDef)
+      const stealBall = _.cloneDeep(this.defField.stealBall)
+      const pushSlider = _.cloneDeep(this.defField.pushSlider)
+      const pushGk = _.clone(this.defField.pushGk)
+      const offside = _.clone(this.defField.offside)
+      return {
+        defLine,
+        encounterLine,
+        defWidth,
+        closeDef,
+        stealBall,
+        pushGk,
+        pushSlider,
+        offside
+      }
+    },
+    // 初始化配置
+    initConf() {},
+    // 存入数据库
+    async setStorage2DB(confStr, type) {
+      const { data } = await this.$http.post('conf/postConf', {
+        content: confStr,
+        type
+      })
+    }
   },
   watch: {
     'fieldWidth.slider.title': {
@@ -1734,7 +1819,6 @@ export default {
     },
     'gkBall.target.val': {
       handler: function(val) {
-        this.gkBall.ways.val = ''
         switch (val) {
           case '发过对方防线':
             this.gkBall.ways.option = this.gkBall.ways.lst.slice(-1)
@@ -1755,10 +1839,16 @@ export default {
             this.gkBall.ways.option = this.gkBall.ways.lst.slice(0, 3)
             break
         }
+        if (!this.gkBall.ways.option.includes(this.gkBall.ways.val)) {
+          this.gkBall.ways.val = ''
+        }
       },
       deep: true,
       immediate: true
     }
+  },
+  created() {
+    this.getStorage()
   },
   mounted() {
     this.initFormation()

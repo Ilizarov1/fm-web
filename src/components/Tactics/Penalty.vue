@@ -11,7 +11,7 @@
             <i
               v-if="!isExist(scope.row.name)"
               class="el-icon-circle-plus click-icon"
-              @click="handleAdd(scope.row.name)"
+              @click="handleAdd(scope.row)"
             ></i>
           </template>
         </el-table-column>
@@ -32,8 +32,11 @@
             class="player-lst"
           >
             <el-tag effect="plain">{{ index + 1 }}</el-tag>
-            {{ player }}
-            <i class="el-icon-remove click-icon" @click="handleRemove"></i>
+            {{ player.name }}
+            <i
+              class="el-icon-remove click-icon"
+              @click="handleRemove(player.name)"
+            ></i>
           </li>
         </ul>
       </el-card>
@@ -46,260 +49,6 @@ export default {
   name: 'Penalty',
   data() {
     return {
-      // players: [
-      //   {
-      //     name: '1-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '2-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '3-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '4-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '5-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '6-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '7-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '8-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '9-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '左',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '10-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '11-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '12-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '13-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '14-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '15-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '16-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '17-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   },
-      //   {
-      //     name: '18-player',
-      //     position: 'ST/RW/CF',
-      //     status: '未入选',
-      //     title: '',
-      //     role: '',
-      //     foot: '右',
-      //     corner: '强',
-      //     free: '中',
-      //     out: '弱',
-      //     shoSkill: Math.ceil(Math.random() * 100),
-      //     penalty: Math.ceil(Math.random() * 100),
-      //     composure: Math.ceil(Math.random() * 100)
-      //   }
-      // ],
       infoLst: [],
       penatly: {
         shooter: []
@@ -309,21 +58,31 @@ export default {
   methods: {
     // 处理添加
     handleAdd(player) {
-      if (!this.isExist(player)) {
-        this.penatly.shooter.push(player)
+      if (!this.isExist(player.name)) {
+        const item = {
+          name: player.name,
+          playerId: player.playerId,
+          isPenalty: 1,
+          penaltySeq: this.penatly.shooter.length + 1
+        }
+        this.penatly.shooter.push(item)
       } else {
         this.$message.error('已经加入')
       }
     },
     // 判断存在
     isExist(player) {
-      const res = this.penatly.shooter.indexOf(player)
-      return !(res === -1)
+      const res = this.penatly.shooter.find(x => x.name === player)
+      return !(res == null)
     },
     // 处理删除
     handleRemove(player) {
-      const idx = this.penatly.shooter.indexOf(player)
+      const arr = this.penatly.shooter
+      const idx = arr.indexOf(arr.find(x => x.name === player))
       this.penatly.shooter.splice(idx, 1)
+      for (const [index, player] of Object.entries(this.penatly.shooter)) {
+        player.penaltySeq = parseInt(index) + 1
+      }
     },
     // 加载数据
     async load() {
@@ -332,7 +91,6 @@ export default {
         const fstrecord = data.fstTeam.find(x => x.playerId === player.id)
         const placerecord = data.placeKick.find(x => x.playerId === player.id)
         const repo = data.reports.find(x => x.playerId === player.id)
-        console.log(fstrecord, placerecord)
         const item = {
           ...player,
           ...repo,
@@ -341,12 +99,22 @@ export default {
         }
         this.infoLst.push(item)
       }
-      console.log(this.infoLst)
+      const penaltyLst = this.infoLst.filter(x => x.isPenalty === 1)
+      for (let i = 1; i < penaltyLst.length + 1; i++) {
+        this.penatly.shooter.push(penaltyLst.find(x => x.penaltySeq === i))
+      }
     },
     // 保存点球数据
-    save() {
-      if (this.penatly.shooter.length < 5) {
-        return this.$message.error('请至少安排5位点球手')
+    async save() {
+      if (this.penatly.shooter.length < 5 || this.penatly.shooter.length > 11) {
+        return this.$message.error('请安排5到11位点球手')
+      }
+      const { data } = await this.$http.post(
+        'placeKick/savePenalty',
+        this.penatly.shooter
+      )
+      if (data.msg === 'success') {
+        this.$message.success('保存成功')
       }
     }
   },

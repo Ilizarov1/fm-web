@@ -3,12 +3,16 @@
     <el-col :span="12">
       <el-table :data="infoLst" width="100%" max-height="540">
         <el-table-column label="球员" prop="name"></el-table-column>
-        <el-table-column label="惯用脚" prop="foot"></el-table-column>
+        <el-table-column label="惯用脚">
+          <template slot-scope="scope">
+            {{ getfoot(scope.row.foot) }}
+          </template>
+        </el-table-column>
         <el-table-column label="角球">
           <template slot-scope="scope">
             {{ scope.row.cornerSkill + '  ' }}
             <el-popconfirm
-              v-if="!isExistBoth(corner.left, corner.right, scope.row.name)"
+              v-if="!isExistBoth(corner.left, corner.right, scope.row)"
               title="左边或者右边"
               confirm-button-text="右边"
               cancel-button-text="左边"
@@ -23,7 +27,7 @@
           <template slot-scope="scope">
             {{ scope.row.freeKick + '  ' }}
             <el-popconfirm
-              v-if="!isExistBoth(free.left, free.right, scope.row.name)"
+              v-if="!isExistBoth(free.left, free.right, scope.row)"
               title="左边或者右边"
               confirm-button-text="右边"
               cancel-button-text="左边"
@@ -38,7 +42,7 @@
           <template slot-scope="scope">
             {{ scope.row.throwInSkill + '  ' }}
             <el-popconfirm
-              v-if="!isExistBoth(out.left, out.right, scope.row.name)"
+              v-if="!isExistBoth(out.left, out.right, scope.row)"
               title="左边或者右边"
               confirm-button-text="右边"
               cancel-button-text="左边"
@@ -57,7 +61,12 @@
           <el-card>
             <div slot="header">
               <span>角球（左）</span>
-              <el-select v-model="corner.val" class="tac-select" size="mini">
+              <el-select
+                v-model="corner.val"
+                class="tac-select"
+                size="mini"
+                @change="setStorage"
+              >
                 <el-option
                   v-for="(opt, index) in corner.option"
                   :key="index"
@@ -87,7 +96,12 @@
           <el-card>
             <div slot="header" class="clearfix">
               <span>角球（右）</span>
-              <el-select v-model="corner.val" class="tac-select" size="mini">
+              <el-select
+                v-model="corner.val"
+                class="tac-select"
+                size="mini"
+                @change="setStorage"
+              >
                 <el-option
                   v-for="(opt, index) in corner.option"
                   :key="index"
@@ -119,7 +133,12 @@
           <el-card>
             <div slot="header">
               <span>任意球（左）</span>
-              <el-select v-model="free.val" class="tac-select" size="mini">
+              <el-select
+                v-model="free.val"
+                class="tac-select"
+                size="mini"
+                @change="setStorage"
+              >
                 <el-option
                   v-for="(opt, index) in free.option"
                   :key="index"
@@ -149,7 +168,12 @@
           <el-card>
             <div slot="header" class="clearfix">
               <span>任意球（右）</span>
-              <el-select v-model="free.val" class="tac-select" size="mini">
+              <el-select
+                v-model="free.val"
+                class="tac-select"
+                size="mini"
+                @change="setStorage"
+              >
                 <el-option
                   v-for="(opt, index) in free.option"
                   :key="index"
@@ -181,7 +205,12 @@
           <el-card>
             <div slot="header">
               <span>界外球（左）</span>
-              <el-select v-model="out.val" class="tac-select" size="mini">
+              <el-select
+                v-model="out.val"
+                class="tac-select"
+                size="mini"
+                @change="setStorage"
+              >
                 <el-option
                   v-for="(opt, index) in out.option"
                   :key="index"
@@ -211,7 +240,12 @@
           <el-card>
             <div slot="header" class="clearfix">
               <span>界外球（右）</span>
-              <el-select v-model="out.val" class="tac-select" size="mini">
+              <el-select
+                v-model="out.val"
+                class="tac-select"
+                size="mini"
+                @change="setStorage"
+              >
                 <el-option
                   v-for="(opt, index) in out.option"
                   :key="index"
@@ -243,211 +277,13 @@
 </template>
 
 <script>
+import qs from 'qs'
+import _ from 'lodash'
 export default {
   name: 'SetPieces',
   data() {
     return {
       infoLst: [],
-      players: [
-        {
-          name: '1-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '2-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '3-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '4-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '5-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '6-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '7-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '8-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '9-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '左',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '10-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '11-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '12-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '13-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '14-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '15-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '16-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '17-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        },
-        {
-          name: '18-player',
-          position: 'ST/RW/CF',
-          status: '未入选',
-          title: '',
-          role: '',
-          foot: '右',
-          corner: '强',
-          free: '中',
-          out: '弱'
-        }
-      ],
       corner: {
         val: '',
         option: ['远门柱', '近门柱', '禁区边缘', '战术角球', '直接射门'],
@@ -513,6 +349,7 @@ export default {
         case 'corner':
           index = this.corner[side].indexOf(player)
           this.corner[side].splice(index, 1)
+          this.del(player, type, side)
           break
         case 'free':
           index = this.free[side].indexOf(player)
@@ -538,6 +375,18 @@ export default {
           ...placerecord
         }
         this.infoLst.push(item)
+      }
+      this.corner.left = this.infoLst.filter(x => x.isCornerLeft === 1)
+      this.corner.right = this.infoLst.filter(x => x.isCornerR === 1)
+      this.free.left = this.infoLst.filter(x => x.isFreeKickL === 1)
+      this.free.right = this.infoLst.filter(x => x.isFreeKickR === 1)
+      this.out.left = this.infoLst.filter(x => x.isThrowInL === 1)
+      this.out.right = this.infoLst.filter(x => x.isThrowInR === 1)
+      const conf = JSON.parse(window.localStorage.getItem('placeKick'))
+      if (conf != null) {
+        Object.assign(this.corner, conf.corner)
+        Object.assign(this.free, conf.free)
+        Object.assign(this.out, conf.out)
       }
     },
     // 处理更新
@@ -584,9 +433,94 @@ export default {
           }
           break
       }
-      console.log(snd, player, side, type)
-      const rcv = await this.$http.post('placeKick/addSetPieces', snd)
+      await this.$http.post('placeKick/addSetPieces', snd)
+    },
+    // 处理删除
+    async del(player, type, side) {
+      let snd = {}
+      switch (type) {
+        case 'corner':
+          if (side === 'left') {
+            snd = {
+              playerId: player.playerId,
+              type: 'isCorner',
+              side: 'L'
+            }
+          } else {
+            snd = {
+              playerId: player.playerId,
+              type: 'isCorner',
+              side: 'R'
+            }
+          }
+          break
+        case 'free':
+          if (side === 'left') {
+            snd = {
+              playerId: player.playerId,
+              type: 'isFreeKick',
+              side: 'L'
+            }
+          } else {
+            snd = {
+              playerId: player.playerId,
+              type: 'isFreeKick',
+              side: 'R'
+            }
+          }
+          break
+        case 'out':
+          if (side === 'left') {
+            snd = {
+              playerId: player.playerId,
+              type: 'isThrowIn',
+              side: 'L'
+            }
+          } else {
+            snd = {
+              playerId: player.playerId,
+              type: 'isThrowIn',
+              side: 'R'
+            }
+          }
+          break
+      }
+      const rcv = await this.$http.post('placeKick/del', qs.stringify(snd), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
       console.log(rcv.data)
+    },
+    // 提交战术配置
+    async setConf(content) {
+      await this.$http.post('conf/postConf', {
+        content: JSON.stringify(content),
+        type: 'placeKick'
+      })
+    },
+    setStorage() {
+      const corner = {
+        val: this.corner.val
+      }
+      const free = {
+        val: this.free.val
+      }
+      const out = {
+        val: this.out.val
+      }
+      const content = {
+        corner,
+        free,
+        out
+      }
+      this.setConf(content)
+      window.localStorage.setItem('placeKick', JSON.stringify(content))
+    },
+    // 惯用脚
+    getfoot(foot) {
+      if (foot === 'left') return '左'
+      else return '右'
     }
   },
   mounted() {

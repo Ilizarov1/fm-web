@@ -81,7 +81,39 @@
         ></canvas>
       </el-row>
     </el-col>
-    <el-col :span="8">
+    <el-col :span="9">
+      <el-row>
+        <el-select v-model="preAnime.val" size="mini" class="anime-select">
+          <el-option
+            v-for="(item, index) in preAnime.anime"
+            :key="index"
+            :label="item.name"
+            :value="item.name"
+          ></el-option>
+        </el-select>
+        <el-button-group>
+          <el-button
+            class="anime-play"
+            size="mini"
+            @click="playPre"
+            type="success"
+            >播放预设</el-button
+          >
+          <el-button
+            size="mini"
+            class="anime-play"
+            @click="dialogVisible = true"
+            >设置预设</el-button
+          >
+          <el-button
+            size="mini"
+            class="anime-play"
+            type="danger"
+            @click="delPre"
+            >删除</el-button
+          >
+        </el-button-group>
+      </el-row>
       <el-row class="frame-text">
         <el-button-group>
           <el-button @click="pushFrame" size="mini" type="primary"
@@ -116,6 +148,15 @@
         ></el-step>
       </el-steps>
     </el-col>
+    <el-dialog title="设置战术名称" :visible.sync="dialogVisible" width="30%">
+      <el-input v-model="preAnime.inputVal">
+        <template slot="prepend">名称</template>
+      </el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="setFrames2DB">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -520,7 +561,13 @@ export default {
       textCommand: '',
       textFrame: [],
       textHeight: '',
-      textIndex: 0
+      textIndex: 0,
+      preAnime: {
+        val: '',
+        inputVal: '',
+        anime: [{ name: '', frames: [] }]
+      },
+      dialogVisible: false
     }
   },
   methods: {
@@ -837,16 +884,71 @@ export default {
         textbox.style.height = '80px'
       }
       this.addTextCtrl = true
+    },
+    // 设置关键帧
+    async setFrames2DB() {
+      const item = {
+        name: this.preAnime.inputVal,
+        frames: this.steps.frames
+      }
+      if (item.frames.length < 2) {
+        return this.$message.error('至少两个关键帧')
+      }
+      let pre = JSON.parse(window.localStorage.getItem('anime'))
+      if (pre != null) {
+        pre.push(item)
+        window.localStorage.setItem('anime', JSON.stringify(pre))
+      } else {
+        pre = []
+        pre.push(item)
+        window.localStorage.setItem('anime', JSON.stringify(pre))
+      }
+      await this.$http.post('conf/postConf', {
+        content: JSON.stringify(pre),
+        type: 'anime'
+      })
+      this.dialogVisible = false
+      this.loadFrames()
+    },
+    // 加载关键帧
+    loadFrames() {
+      this.preAnime.anime = JSON.parse(window.localStorage.getItem('anime'))
+    },
+    // 播放预设
+    playPre() {
+      this.steps.frames = this.preAnime.anime.find(
+        x => x.name === this.preAnime.val
+      ).frames
+      this.playAnime()
+    },
+    // 删除预设
+    async delPre() {
+      const anime = this.preAnime.anime
+      const idx = anime.indexOf(anime.find(x => x.name === this.preAnime.val))
+      anime.splice(idx, 1)
+      window.localStorage.setItem('anime', JSON.stringify(anime))
+      await this.$http.post('conf/postConf', {
+        content: JSON.stringify(anime),
+        type: 'anime'
+      })
     }
   },
   mounted() {
     this.initCanvas()
     this.initXandY()
+    this.loadFrames()
   }
 }
 </script>
 
 <style lang="less" scoped>
+.anime-select {
+  float: left;
+  width: 170px;
+}
+.anime-play {
+  float: left;
+}
 img {
   width: auto;
   height: auto;

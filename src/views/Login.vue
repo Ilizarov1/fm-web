@@ -54,7 +54,7 @@
             autocomplete="off"
           >
             <el-option
-              v-for="(item, index) in this.players"
+              v-for="(item, index) in this.players.filter(x => x.userId === 0)"
               :key="index"
               :label="item.name"
               :value="item.name"
@@ -131,7 +131,7 @@ export default {
             this.$message.success('登录成功')
             window.sessionStorage.setItem('token', data.token)
             window.sessionStorage.setItem('tokenName', data.tokenName)
-            this.$router.push('/index').then()
+            this.$router.push('/dashboard').then()
             break
           }
           default:
@@ -152,7 +152,11 @@ export default {
           }
         }
       )
-      console.log(status, data)
+      if (status === 200) {
+        window.sessionStorage.setItem('token', data.token)
+        this.$message.success('注册成功')
+        this.signVisible = false
+      }
     }
   },
   mounted() {

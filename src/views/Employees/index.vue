@@ -21,7 +21,7 @@
       </el-input>
     </el-row>
     <el-row>
-      <el-table width="1060px" :data="employees">
+      <el-table width="1060px" :data="employees" max-height="550px">
         <el-table-column label="姓名" prop="name"></el-table-column>
         <el-table-column label="所属" prop="employGroup"></el-table-column>
         <el-table-column label="具体职位" prop="position"></el-table-column>
@@ -83,16 +83,6 @@ export default {
   name: 'index',
   data() {
     return {
-      // employees: [
-      //   { name: 'jnz', group: '教练组', position: '教练' },
-      //   { name: 'jnz', group: '教练组', position: '教练' },
-      //   { name: 'jnz', group: '教练组', position: '教练' },
-      //   { name: 'jnz', group: '教练组', position: '教练' },
-      //   { name: 'jnz', group: '教练组', position: '教练' },
-      //   { name: 'jnz', group: '教练组', position: '教练' },
-      //   { name: 'jnz', group: '教练组', position: '教练' },
-      //   { name: 'jnz', group: '教练组', position: '教练' }
-      // ],
       posVisible: false,
       posForm: {
         employGroup: '',
@@ -155,7 +145,7 @@ export default {
       ],
       search: {
         content: '',
-        searchType: ''
+        searchType: 'name'
       }
     }
   },

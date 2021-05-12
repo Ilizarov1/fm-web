@@ -13,6 +13,7 @@ import Medi from '@/views/Medi/index'
 import Tactics from '@/views/Tactics/index'
 import Anime from '@/views/Tactics/Anime'
 import FreeKick from '@/views/Tactics/Freekick'
+import Dashboard from '@/views/Dashboard'
 
 Vue.use(VueRouter)
 
@@ -35,7 +36,8 @@ const routes = [
       { path: '/medi', component: Medi },
       { path: '/tactics', component: Tactics },
       { path: '/anime', component: Anime },
-      { path: '/freekick', component: FreeKick }
+      { path: '/freekick', component: FreeKick },
+      { path: '/dashboard', component: Dashboard }
     ]
   },
   {

@@ -2,7 +2,7 @@
   <el-container>
     <el-aside width="200px">
       <el-menu default-active="2" unique-opened router>
-        <el-menu-item index="/login">首页</el-menu-item>
+        <el-menu-item index="/dashboard">首页</el-menu-item>
         <el-menu-item index="/player">球员信息</el-menu-item>
         <el-menu-item index="/playerList">球员列表</el-menu-item>
         <el-menu-item index="/employees">教练团队</el-menu-item>

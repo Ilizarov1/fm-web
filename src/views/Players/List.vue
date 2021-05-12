@@ -51,11 +51,11 @@
         </el-table-column>
         <el-table-column prop="name" label="姓名" width="100"></el-table-column>
         <el-table-column prop="skilledRole" label="位置"></el-table-column>
-        <el-table-column
-          prop="rate"
-          label="综合评分"
-          width="100"
-        ></el-table-column>
+        <el-table-column label="综合评分" width="100">
+          <template slot-scope="scope">
+            {{ scope.row.rate === 0 ? '未评分' : scope.row.rate }}
+          </template>
+        </el-table-column>
         <el-table-column label="工作/休假/伤停" width="120">
           <template slot-scope="scope">
             {{ getIsWork(scope.row.isWork) }}

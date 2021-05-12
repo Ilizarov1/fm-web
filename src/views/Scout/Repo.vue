@@ -331,6 +331,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import _ from 'lodash'
 export default {
   name: 'Repo',
   data() {
@@ -456,7 +457,8 @@ export default {
         kickoff: '开球',
         standPosition: '站位',
         gkReact: '反应'
-      }
+      },
+      backup: {}
     }
   },
   computed: {
@@ -464,6 +466,10 @@ export default {
   },
   methods: {
     ...mapActions(['getPlayers']),
+    // 清理数据
+    clearData() {
+      Object.assign(this.$data, this.$options.data())
+    },
     removeAdv(index) {
       this.scoutRepo.advantages.splice(index, 1)
     },
@@ -588,6 +594,7 @@ export default {
             this.$message.success('报告' + data.msg)
           }
         })
+      this.$router.go(0)
     },
     async submitReport() {
       return await this.$http.post('scout/insert', this.scoutForm)
@@ -596,6 +603,7 @@ export default {
       const { status, data } = await this.$http.post('scout/getScout', {
         name: this.scoutRepo.name
       })
+      this.clearData()
       // 处理球员基本信息
       const player = data.player
       this.scoutRepo.name = player.name

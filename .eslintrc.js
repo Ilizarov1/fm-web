@@ -13,6 +13,11 @@ module.exports = {
     'no-unused-vars': 'off',
     'space-before-function-paren': 'off',
     indent: 'off',
-    camelcase: ['error', { allow: ['aa_BB'] }]
+    camelcase: [
+      0,
+      {
+        properties: 'always'
+      }
+    ]
   }
 }

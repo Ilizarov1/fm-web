@@ -13,7 +13,7 @@ import Medi from '@/views/Medi/index'
 import Tactics from '@/views/Tactics/index'
 import Anime from '@/views/Tactics/Anime'
 import FreeKick from '@/views/Tactics/Freekick'
-import Dashboard from '@/views/Dashboard'
+import Dashboard from '@/views/dashboard/index'
 
 Vue.use(VueRouter)
 

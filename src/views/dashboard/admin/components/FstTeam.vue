@@ -8,7 +8,7 @@
       >
         <div class="player">
           <div class="player-position">
-            {{ item.position }}
+            {{ item.status === 2 ? '替补' : item.position }}
           </div>
           <div class="player-role">
             {{ item.role }}
@@ -27,7 +27,7 @@
       >
         <div class="player">
           <div class="player-position">
-            {{ item.position }}
+            {{ item.status === 2 ? '替补' : item.position }}
           </div>
           <div class="player-role">
             {{ item.role }}
@@ -58,7 +58,6 @@ export default {
           ...data.fstTeam.find(x => x.playerId === player.id)
         }
         this.fstLst.push(item)
-        console.log(item)
       }
     },
     // 获得球员状态

@@ -325,6 +325,7 @@
     <el-row type="flex" justify="space-around">
       <el-button type="primary" @click="submit">提交</el-button>
       <el-button>重置</el-button>
+      <el-button @click="getRandom">随机获得属性值</el-button>
     </el-row>
   </div>
 </template>
@@ -649,6 +650,39 @@ export default {
       this.setVantages('advantages', report.advantages)
       this.setVantages('disadvantages', report.disadvantages)
       this.scoutRepo.suggestion = report.suggestions
+    },
+    // 随机属性值
+    getRandom() {
+      for (const [key, val] of Object.entries(this.reflect)) {
+        const pac = this.scoutRepo.pac.find(x => x.label === val)
+        const sho = this.scoutRepo.sho.find(x => x.label === val)
+        const pas = this.scoutRepo.pas.find(x => x.label === val)
+        const dri = this.scoutRepo.dri.find(x => x.label === val)
+        const def = this.scoutRepo.def.find(x => x.label === val)
+        const phy = this.scoutRepo.phy.find(x => x.label === val)
+        const gk = this.scoutRepo.gk.find(x => x.label === val)
+        if (pac != null) {
+          pac.val = Math.round(Math.random() * 100)
+        }
+        if (sho != null) {
+          sho.val = Math.round(Math.random() * 100)
+        }
+        if (pas != null) {
+          pas.val = Math.round(Math.random() * 100)
+        }
+        if (dri != null) {
+          dri.val = Math.round(Math.random() * 100)
+        }
+        if (def != null) {
+          def.val = Math.round(Math.random() * 100)
+        }
+        if (phy != null) {
+          phy.val = Math.round(Math.random() * 100)
+        }
+        if (gk != null) {
+          gk.val = Math.round(Math.random() * 100)
+        }
+      }
     }
   },
   mounted() {

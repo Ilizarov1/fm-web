@@ -761,11 +761,13 @@ export default {
       if (this.replace > this.replaceMax) {
         return this.$message.error('超过替补人数上限')
       }
-      this.players[index].status = '替补'
+      this.fstLst[index].status = 2
+      this.postStatus(this.fstLst[index].playerId, 2)
     },
     removeReplace(index) {
       this.replace--
-      this.players[index].status = '未入选'
+      this.fstLst[index].status = 0
+      this.postStatus(this.fstLst[index].playerId, 0)
     },
     // 加载一线队成员
     async load() {

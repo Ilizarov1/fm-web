@@ -5,18 +5,29 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import adminDashboard from './admin'
-
+import scoutDashboard from './scout'
 export default {
   name: 'Dashboard',
-  components: { adminDashboard },
+  components: { adminDashboard, scoutDashboard },
   data() {
     return {
       currentRole: 'adminDashboard'
     }
   },
-  computed: {},
-  created() {}
+  computed: {
+    ...mapState(['group', 'position'])
+  },
+  created() {
+    switch (this.group) {
+      case '教练组':
+        this.currentRole = 'adminDashboard'
+        break
+      case '球探组':
+        this.currentRole = 'scoutDashboard'
+        break
+    }
+  }
 }
 </script>

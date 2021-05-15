@@ -1,19 +1,7 @@
 <template>
   <el-container>
     <el-aside width="200px">
-      <el-menu default-active="2" unique-opened router>
-        <el-menu-item index="/dashboard">首页</el-menu-item>
-        <el-menu-item index="/player">球员信息</el-menu-item>
-        <el-menu-item index="/playerList">球员列表</el-menu-item>
-        <el-menu-item index="/employees">教练团队</el-menu-item>
-        <el-menu-item index="/competition">赛程安排</el-menu-item>
-        <el-menu-item index="/training">训练安排</el-menu-item>
-        <el-menu-item index="/scout">球探报告</el-menu-item>
-        <el-menu-item index="/medi">伤情报告</el-menu-item>
-        <el-menu-item index="/tactics">战术</el-menu-item>
-        <el-menu-item index="/anime">动态战术</el-menu-item>
-        <el-menu-item index="/freekick">定位球</el-menu-item>
-      </el-menu>
+      <component :is="currentRole"></component>
     </el-aside>
     <el-container>
       <el-header>
@@ -38,13 +26,39 @@
 </template>
 
 <script>
+import AdminMenu from 'components/Main/components/AdminMenu'
+import ScoutMenu from 'components/Main/components/ScoutMenu'
+import { mapState } from 'vuex'
 export default {
   name: 'index',
+  components: { AdminMenu, ScoutMenu },
+  data() {
+    return {
+      currentRole: 'AdminMenu'
+    }
+  },
   methods: {
     logout() {
       window.sessionStorage.removeItem('token')
       this.$message.success('退出成功')
       this.$router.push('/').then()
+    }
+  },
+  computed: {
+    ...mapState(['group', 'position'])
+  },
+  mounted() {
+    switch (this.group) {
+      case '教练组':
+        this.currentRole = 'AdminMenu'
+        break
+      case '球探组':
+        this.currentRole = 'ScoutMenu'
+        break
+      case '医疗组':
+        break
+      case 'player':
+        break
     }
   }
 }

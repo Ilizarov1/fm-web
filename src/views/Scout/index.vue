@@ -165,6 +165,19 @@ export default {
       } else {
         this.$message.error('发送出错')
       }
+      const task = {
+        scout: this.scoutSelect,
+        playerlst: snd,
+        type: 'scoutReport'
+      }
+      let tasks = JSON.parse(window.localStorage.getItem('tasks'))
+      if (tasks != null) {
+        tasks.push(task)
+      } else {
+        tasks = []
+        tasks.push(task)
+      }
+      window.localStorage.setItem('tasks', JSON.stringify(tasks))
     },
     async needContinue() {
       const snd = []
@@ -179,6 +192,19 @@ export default {
       } else {
         this.$message.error('发送出错')
       }
+      const task = {
+        scout: this.scoutSelect,
+        playerlst: snd,
+        type: 'scoutContinue'
+      }
+      let tasks = JSON.parse(window.localStorage.getItem('tasks'))
+      if (tasks != null) {
+        tasks.push(task)
+      } else {
+        tasks = []
+        tasks.push(task)
+      }
+      window.localStorage.setItem('tasks', JSON.stringify(tasks))
     },
     async load() {
       const rcv = await this.$http.get('employee/getScouts')

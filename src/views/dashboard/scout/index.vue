@@ -9,19 +9,23 @@
       </el-card>
     </el-row>
     <panel-group></panel-group>
-    <tactics></tactics>
+    <scout-panel></scout-panel>
   </div>
 </template>
 
 <script>
-import PanelGroup from './components/PanelGroup'
 import Tactics from '@/views/dashboard/admin/components/Tactics'
 import { mapState } from 'vuex'
+import PanelGroup from '@/views/dashboard/scout/components/PanelGroup'
+import ScoutPanel from '@/views/dashboard/scout/components/scoutPanel'
 export default {
   name: 'index',
-  components: { PanelGroup, Tactics },
+  components: { ScoutPanel, PanelGroup },
+  data() {
+    return {}
+  },
   computed: {
-    ...mapState(['group', 'position', 'name'])
+    ...mapState(['position', 'group', 'name'])
   }
 }
 </script>

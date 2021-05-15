@@ -129,8 +129,18 @@ export default {
         switch (data.msg) {
           case 'success': {
             this.$message.success('登录成功')
-            window.sessionStorage.setItem('token', data.token)
+            window.sessionStorage.setItem('tokenValue', data.token)
             window.sessionStorage.setItem('tokenName', data.tokenName)
+            window.localStorage.setItem('group', data.group)
+            if (data.group !== 'player') {
+              window.localStorage.setItem('position', data.position)
+            }
+            console.log(data)
+            this.$store.commit('setGroupPosition', {
+              group: data.group,
+              position: data.position,
+              name: data.name
+            })
             this.$router.push('/dashboard').then()
             break
           }
@@ -153,9 +163,20 @@ export default {
         }
       )
       if (status === 200) {
-        window.sessionStorage.setItem('token', data.token)
+        window.sessionStorage.setItem('tokenValue', data.token)
+        window.sessionStorage.setItem('tokenName', data.tokenName)
+        window.localStorage.setItem('group', data.group)
+        if (data.group !== 'player') {
+          window.localStorage.setItem('position', data.position)
+        }
+        this.$store.commit('setGroupPosition', {
+          group: data.group,
+          position: data.position,
+          name: data.name
+        })
         this.$message.success('注册成功')
         this.signVisible = false
+        this.$router.push('/dashboard').then()
       }
     }
   },

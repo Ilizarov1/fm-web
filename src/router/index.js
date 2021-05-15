@@ -55,9 +55,13 @@ router.beforeEach((to, from, next) => {
   //  to将要访问的路径
   //  from来源路径
   //  next表示放行
-
-  // const tokenStr = window.sessionStorage.getItem('token')
-
+  if (to.path === '/login') {
+    return next()
+  }
+  const tokenStr = window.sessionStorage.getItem('tokenValue')
+  if (!tokenStr) {
+    return next('/login')
+  }
   next()
 })
 

@@ -12,6 +12,9 @@ export default new Vuex.Store({
     trainingLst: [],
     competition: [],
     reports: [],
+    group: '',
+    position: '',
+    name: '',
     status: 200
   },
   mutations: {
@@ -52,6 +55,12 @@ export default new Vuex.Store({
     // 更新球探报告
     updateScoutReport(state, newReport) {
       state.reports = newReport
+    },
+    // 更新group和position
+    setGroupPosition(state, payload) {
+      state.group = payload.group
+      state.position = payload.position
+      state.name = payload.name
     }
   },
   actions: {

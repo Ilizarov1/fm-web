@@ -4,7 +4,7 @@
     <el-row :gutter="20">
       <el-col :span="8">
         <h4>评估人</h4>
-        <span>小李</span><br />
+        <span>1-doctor</span><br />
         <span>首席医生</span>
       </el-col>
       <el-col :span="5">
@@ -17,7 +17,7 @@
         <span>训练负荷低</span><br />
         <span>球员对训练强度表示满意</span>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="6" v-if="group === '医疗组'">
         <h4>医生操作</h4>
         <el-button type="primary" @click="dialogVisible = true"
           >更新伤情报告</el-button
@@ -136,6 +136,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'index',
   data() {
@@ -262,6 +263,9 @@ export default {
   mounted() {
     this.loadPlayers()
     this.loadReport()
+  },
+  computed: {
+    ...mapState(['name', 'group', 'position'])
   }
 }
 </script>

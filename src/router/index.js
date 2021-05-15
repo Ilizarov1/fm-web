@@ -10,9 +10,9 @@ import Training from '@/views/Schedule/Training'
 import Scout from '@/views/Scout/index'
 import ScoutRepo from '@/views/Scout/Repo'
 import Medi from '@/views/Medi/index'
-import Tactics from '@/views/Tactics/index'
-import Anime from '@/views/Tactics/Anime'
-import FreeKick from '@/views/Tactics/Freekick'
+import Formation from '@/views/Tactics/Formation/index'
+import Anime from '@/views/Tactics/Anime/index'
+import FreeKick from '@/views/Tactics/FreeKick/index'
 import Dashboard from '@/views/dashboard/index'
 
 Vue.use(VueRouter)
@@ -34,7 +34,7 @@ const routes = [
       { path: '/scout', component: Scout },
       { path: '/scoutRepo', component: ScoutRepo },
       { path: '/medi', component: Medi },
-      { path: '/tactics', component: Tactics },
+      { path: '/tactics', component: Formation },
       { path: '/anime', component: Anime },
       { path: '/freekick', component: FreeKick },
       { path: '/dashboard', component: Dashboard }

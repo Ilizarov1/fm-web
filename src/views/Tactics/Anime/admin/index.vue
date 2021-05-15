@@ -981,7 +981,8 @@ img {
     left: 0;
     width: 100%;
     height: 100%;
-    background: url('../../assets/images/fields/球场竖向.png') no-repeat top;
+    background: url('../../../../assets/images/fields/球场竖向.png') no-repeat
+      top;
   }
 }
 .circle {
@@ -995,7 +996,8 @@ img {
 .circle-1 {
   width: 30px;
   height: 30px;
-  background: url(../../assets/images/numbers/跑.png) no-repeat center center;
+  background: url(../../../../assets/images/numbers/跑.png) no-repeat center
+    center;
   background-size: 30px;
 }
 
@@ -1009,7 +1011,8 @@ img {
 .circle-3 {
   width: 30px;
   height: 30px;
-  background: url(../../assets/images/numbers/跑1.png) no-repeat center center;
+  background: url(../../../../assets/images/numbers/跑1.png) no-repeat center
+    center;
   background-size: 30px;
 }
 .drag-zone {
@@ -1017,7 +1020,7 @@ img {
   width: 100%;
 }
 #canvas {
-  background: url('../../assets/images/fields/球场竖向.png') no-repeat top;
+  background: url('../../../../assets/images/fields/球场竖向.png') no-repeat top;
 }
 
 .tool-bar {

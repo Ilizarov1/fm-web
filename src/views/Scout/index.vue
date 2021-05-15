@@ -4,7 +4,7 @@
       <el-col :span="18">
         <scout-panel></scout-panel>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="6" v-if="group === '球探组'">
         <div>
           <h5>球探操作</h5>
           <el-button type="primary" @click="toRepo">提交球探报告</el-button
@@ -87,7 +87,7 @@ export default {
   },
   computed: {
     ...mapState(['players']),
-    ...mapState(['reports'])
+    ...mapState(['reports', 'name', 'group', 'position'])
   },
   methods: {
     ...mapActions(['getReport']),

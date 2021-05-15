@@ -1943,8 +1943,8 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background: url('../../assets/images/fields/球场竖向.png') no-repeat center
-      center;
+    background: url('../../../../assets/images/fields/球场竖向.png') no-repeat
+      center center;
     background-size: 60%;
   }
 }

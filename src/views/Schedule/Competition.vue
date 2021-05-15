@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row>
+    <el-row v-if="group === '教练组'">
       <el-button type="primary" size="mini" @click="modVisible = true"
         >修改比赛安排</el-button
       >
@@ -110,7 +110,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['competition'])
+    ...mapState(['competition', 'group', 'position'])
   },
   mounted() {
     this.getCompetition()

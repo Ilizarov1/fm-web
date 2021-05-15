@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row>
+    <el-row v-if="group === '教练组'">
       <el-button type="primary" size="mini" @click="arrangeVis = true"
         >安排训练</el-button
       >
@@ -160,7 +160,7 @@ export default {
   },
   computed: {
     ...mapState(['coaches']),
-    ...mapState(['trainingLst'])
+    ...mapState(['trainingLst', 'position', 'group'])
   },
   methods: {
     ...mapActions(['getCoaches']),

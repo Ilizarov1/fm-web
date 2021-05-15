@@ -28,10 +28,12 @@
 <script>
 import AdminMenu from 'components/Main/components/AdminMenu'
 import ScoutMenu from 'components/Main/components/ScoutMenu'
+import DoctorMenu from 'components/Main/components/DoctorMenu'
+import PlayerMenu from 'components/Main/components/PlayerMenu'
 import { mapState } from 'vuex'
 export default {
   name: 'index',
-  components: { AdminMenu, ScoutMenu },
+  components: { AdminMenu, ScoutMenu, DoctorMenu, PlayerMenu },
   data() {
     return {
       currentRole: 'AdminMenu'
@@ -56,8 +58,10 @@ export default {
         this.currentRole = 'ScoutMenu'
         break
       case '医疗组':
+        this.currentRole = 'DoctorMenu'
         break
       case 'player':
+        this.currentRole = 'PlayerMenu'
         break
     }
   }

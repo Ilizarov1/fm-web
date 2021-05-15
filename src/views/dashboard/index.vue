@@ -8,9 +8,16 @@
 import { mapState } from 'vuex'
 import adminDashboard from './admin'
 import scoutDashboard from './scout'
+import doctorDashboard from './doctor'
+import playerDashboard from './player'
 export default {
   name: 'Dashboard',
-  components: { adminDashboard, scoutDashboard },
+  components: {
+    adminDashboard,
+    scoutDashboard,
+    doctorDashboard,
+    playerDashboard
+  },
   data() {
     return {
       currentRole: 'adminDashboard'
@@ -26,6 +33,12 @@ export default {
         break
       case '球探组':
         this.currentRole = 'scoutDashboard'
+        break
+      case '医疗组':
+        this.currentRole = 'doctorDashboard'
+        break
+      case 'player':
+        this.currentRole = 'playerDashboard'
         break
     }
   }
